@@ -2,7 +2,7 @@
  * MaNGOS is a full featured server for World of Warcraft, supporting
  * the following clients: 1.12.x, 2.4.3, 3.3.5a, 4.3.4a and 5.4.8
  *
- * Copyright (C) 2005-2019  MaNGOS project <https://getmangos.eu>
+ * Copyright (C) 2005-2020 MaNGOS <https://getmangos.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,8 +55,8 @@ struct AreaTableEntry
     uint32  ID;                                             // 0        m_ID - ID of the Area within the DBC.
     uint32  mapid;                                          // 1        m_ContinentID - ID of the Continent in DBC (0 = Azeroth, 1 = Kalimdor, ...)
     uint32  zone;                                           // 2        m_ParentAreaID - ID of the parent area.
-    uint32  exploreFlag;                                    // 3        m_AreaBit - 
-    uint32  flags;                                          // 4        m_flags - 
+    uint32  exploreFlag;                                    // 3        m_AreaBit -
+    uint32  flags;                                          // 4        m_flags -
     // 5        m_SoundProviderPref
     // 6        m_SoundProviderPrefUnderwater
     // 7        m_AmbienceID
@@ -116,7 +116,7 @@ struct BankBagSlotPricesEntry
 
 /**
 * \struct CharStartOutfitEntry
-* \brief 
+* \brief
 *
 */
 struct CharStartOutfitEntry
@@ -166,7 +166,7 @@ struct ChrClassesEntry
 
 /**
 * \struct ChrRacesEntry
-* \brief Entry rerepsenting 
+* \brief Entry rerepsenting
 */
 struct ChrRacesEntry
 {
@@ -187,7 +187,7 @@ struct ChrRacesEntry
     uint32      startingTaxiMask;                           // 14        Starting Taxi Max for the given Race (already discovered Taxi Nodes).
     // 15       m_clientFileString
     uint32      CinematicSequence;                          // 16       m_cinematicSequenceID - Cinematic Sequence ID.
-    char*       name[8];                                    // 17-24    m_name_lang used for DBC language detection/selection 
+    char*       name[8];                                    // 17-24    m_name_lang used for DBC language detection/selection
     // 25 string flags
     // 26-27    m_facialHairCustomization[2]
     // 28       m_hairCustomization
@@ -335,7 +335,7 @@ struct FactionEntry
 {
     uint32      ID;                                         // 0        m_ID - ID in DBC.
     int32       reputationListID;                           // 1        m_reputationIndex - ID of the Reputation List.
-    uint32      BaseRepRaceMask[4];                         // 2-5      m_reputationRaceMask - 
+    uint32      BaseRepRaceMask[4];                         // 2-5      m_reputationRaceMask -
     uint32      BaseRepClassMask[4];                        // 6-9      m_reputationClassMask
     int32       BaseRepValue[4];                            // 10-13    m_reputationBase
     uint32      ReputationFlags[4];                         // 14-17    m_reputationFlags
@@ -391,10 +391,14 @@ struct FactionTemplateEntry
         {
             for (int i = 0; i < 4; ++i)
                 if (enemyFaction[i]  == entry.faction)
-                    { return false; }
+                {
+                    return false;
+                }
             for (int i = 0; i < 4; ++i)
                 if (friendFaction[i] == entry.faction)
-                    { return true; }
+                {
+                    return true;
+                }
         }
         return (friendlyMask & entry.ourMask) || (ourMask & entry.friendlyMask);
     }
@@ -404,10 +408,14 @@ struct FactionTemplateEntry
         {
             for (int i = 0; i < 4; ++i)
                 if (enemyFaction[i]  == entry.faction)
-                    { return true; }
+                {
+                    return true;
+                }
             for (int i = 0; i < 4; ++i)
                 if (friendFaction[i] == entry.faction)
-                    { return false; }
+                {
+                    return false;
+                }
         }
         return (hostileMask & entry.ourMask) != 0;
     }
@@ -416,7 +424,9 @@ struct FactionTemplateEntry
     {
         for (int i = 0; i < 4; ++i)
             if (enemyFaction[i] != 0)
-                { return false; }
+            {
+                return false;
+            }
         return hostileMask == 0 && friendlyMask == 0;
     }
     bool IsContestedGuardFaction() const { return (factionFlags & FACTION_TEMPLATE_FLAG_CONTESTED_GUARD) != 0; }
@@ -738,7 +748,7 @@ struct ClassFamilyMask
 *
 * This structure also contains flags about spell family, attributes, spell effects
 * enchantement, cast conditions, proc conditions, mechanic, cast time, damage range, ...
-* 
+*
 * All we need to know about spells is represented by such entry and used for every effect within the game
 * such as elixir, potion, buff, heal, damage, ..
 */
@@ -924,7 +934,9 @@ struct SpellEntry
         {
             for (uint8 i = EFFECT_INDEX_0; i <= EFFECT_INDEX_2; ++i)
                 if (Effect[i] == effect)
+                {
                     return true;
+                }
             return false;
         }
     private:
@@ -999,7 +1011,7 @@ struct SpellDurationEntry
 
 /**
 * \struct SpellFocusObjectEntry
-* \brief 
+* \brief
 */
 struct SpellFocusObjectEntry
 {

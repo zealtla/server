@@ -2,7 +2,7 @@
  * MaNGOS is a full featured server for World of Warcraft, supporting
  * the following clients: 1.12.x, 2.4.3, 3.3.5a, 4.3.4a and 5.4.8
  *
- * Copyright (C) 2005-2019  MaNGOS project <https://getmangos.eu>
+ * Copyright (C) 2005-2020 MaNGOS <https://getmangos.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@
 #define CONTACT_DISTANCE            0.5f
 #define INTERACTION_DISTANCE        5.0f
 #define ATTACK_DISTANCE             5.0f
-#define TRADE_DISTANCE              11.11f                  // max distance for trading            
+#define TRADE_DISTANCE              11.11f                  // max distance for trading
 #define MAX_VISIBILITY_DISTANCE     333.0f                  // max distance for visible object show, limited in 333 yards
 #define DEFAULT_VISIBILITY_DISTANCE 90.0f                   // default visible distance, 90 yards on continents
 #define DEFAULT_VISIBILITY_INSTANCE 120.0f                  // default visible distance in instances, 120 yards
@@ -113,7 +113,9 @@ class WorldUpdateCounter
         time_t timeElapsed()
         {
             if (!m_tmStart)
-                { m_tmStart = WorldTimer::tickPrevTime(); }
+            {
+                m_tmStart = WorldTimer::tickPrevTime();
+            }
 
             return WorldTimer::getMSTimeDiff(m_tmStart, WorldTimer::tickTime());
         }
@@ -133,7 +135,9 @@ class Object
         virtual void AddToWorld()
         {
             if (m_inWorld)
-                { return; }
+            {
+                return;
+            }
 
             m_inWorld = true;
 
@@ -273,9 +277,13 @@ class Object
         void ToggleFlag(uint16 index, uint32 flag)
         {
             if (HasFlag(index, flag))
-                { RemoveFlag(index, flag); }
+            {
+                RemoveFlag(index, flag);
+            }
             else
-                { SetFlag(index, flag); }
+            {
+                SetFlag(index, flag);
+            }
         }
 
         /**
@@ -295,9 +303,13 @@ class Object
         void ApplyModFlag(uint16 index, uint32 flag, bool apply)
         {
             if (apply)
-                { SetFlag(index, flag); }
+            {
+                SetFlag(index, flag);
+            }
             else
-                { RemoveFlag(index, flag); }
+            {
+                RemoveFlag(index, flag);
+            }
         }
 
         void SetByteFlag(uint16 index, uint8 offset, uint8 newFlag);
@@ -306,9 +318,13 @@ class Object
         void ToggleByteFlag(uint16 index, uint8 offset, uint8 flag)
         {
             if (HasByteFlag(index, offset, flag))
-                { RemoveByteFlag(index, offset, flag); }
+            {
+                RemoveByteFlag(index, offset, flag);
+            }
             else
-                { SetByteFlag(index, offset, flag); }
+            {
+                SetByteFlag(index, offset, flag);
+            }
         }
 
         bool HasByteFlag(uint16 index, uint8 offset, uint8 flag) const
@@ -321,9 +337,13 @@ class Object
         void ApplyModByteFlag(uint16 index, uint8 offset, uint32 flag, bool apply)
         {
             if (apply)
-                { SetByteFlag(index, offset, flag); }
+            {
+                SetByteFlag(index, offset, flag);
+            }
             else
-                { RemoveByteFlag(index, offset, flag); }
+            {
+                RemoveByteFlag(index, offset, flag);
+            }
         }
 
         void SetShortFlag(uint16 index, bool highpart, uint16 newFlag);
@@ -332,9 +352,13 @@ class Object
         void ToggleShortFlag(uint16 index, bool highpart, uint8 flag)
         {
             if (HasShortFlag(index, highpart, flag))
-                { RemoveShortFlag(index, highpart, flag); }
+            {
+                RemoveShortFlag(index, highpart, flag);
+            }
             else
-                { SetShortFlag(index, highpart, flag); }
+            {
+                SetShortFlag(index, highpart, flag);
+            }
         }
 
         bool HasShortFlag(uint16 index, bool highpart, uint8 flag) const
@@ -346,9 +370,13 @@ class Object
         void ApplyModShortFlag(uint16 index, bool highpart, uint32 flag, bool apply)
         {
             if (apply)
-                { SetShortFlag(index, highpart, flag); }
+            {
+                SetShortFlag(index, highpart, flag);
+            }
             else
-                { RemoveShortFlag(index, highpart, flag); }
+            {
+                RemoveShortFlag(index, highpart, flag);
+            }
         }
 
         void SetFlag64(uint16 index, uint64 newFlag)
@@ -368,9 +396,13 @@ class Object
         void ToggleFlag64(uint16 index, uint64 flag)
         {
             if (HasFlag64(index, flag))
-                { RemoveFlag64(index, flag); }
+            {
+                RemoveFlag64(index, flag);
+            }
             else
-                { SetFlag64(index, flag); }
+            {
+                SetFlag64(index, flag);
+            }
         }
 
         bool HasFlag64(uint16 index, uint64 flag) const
@@ -382,9 +414,13 @@ class Object
         void ApplyModFlag64(uint16 index, uint64 flag, bool apply)
         {
             if (apply)
-                { SetFlag64(index, flag); }
+            {
+                SetFlag64(index, flag);
+            }
             else
-                { RemoveFlag64(index, flag); }
+            {
+                RemoveFlag64(index, flag);
+            }
         }
 
         void ClearUpdateMask(bool remove);
@@ -456,7 +492,7 @@ class WorldObject : public Object
 
         // class is used to manipulate with WorldUpdateCounter
         // it is needed in order to get time diff between two object's Update() calls
-        class  UpdateHelper
+        class UpdateHelper
         {
             public:
                 explicit UpdateHelper(WorldObject* obj) : m_obj(obj) {}

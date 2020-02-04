@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019  MaNGOS project <http://getmangos.eu>
+ * Copyright (C) 2015-2020 MaNGOS <https://getmangos.eu>
  * Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  *
@@ -51,7 +51,9 @@ void LoadDisables()
 {
     // reload case
     for (DisableMap::iterator itr = m_DisableMap.begin(); itr != m_DisableMap.end(); ++itr)
+    {
         itr->second.clear();
+    }
 
     m_DisableMap.clear();
 
@@ -301,11 +303,15 @@ bool IsDisabledFor(DisableType type, uint32 entry, Unit const* unit, uint8 flags
 {
     MANGOS_ASSERT(type < MAX_DISABLE_TYPES);
     if (m_DisableMap[type].empty())
+    {
         return false;
+    }
 
     DisableTypeMap::iterator itr = m_DisableMap[type].find(entry);
     if (itr == m_DisableMap[type].end())    // not disabled
+    {
         return false;
+    }
 
     switch (type)
     {
@@ -321,10 +327,14 @@ bool IsDisabledFor(DisableType type, uint32 entry, Unit const* unit, uint8 flags
                     {
                         std::set<uint32> const& mapIds = itr->second.params[0];
                         if (mapIds.find(unit->GetMapId()) != mapIds.end())
+                        {
                             return true;                                        // Spell is disabled on current map
+                        }
 
                         if (!(spellFlags & SPELL_DISABLE_AREA))
+                        {
                             return false;                                       // Spell is disabled on another map, but not this one, return false
+                        }
 
                         // Spell is disabled in an area, but not explicitly our current mapId. Continue processing.
                     }
@@ -333,19 +343,27 @@ bool IsDisabledFor(DisableType type, uint32 entry, Unit const* unit, uint8 flags
                     {
                         std::set<uint32> const& areaIds = itr->second.params[1];
                         if (areaIds.find(unit->GetAreaId()) != areaIds.end())
+                        {
                             return true;                                        // Spell is disabled in this area
+                        }
                         return false;                                           // Spell is disabled in another area, but not this one, return false
                     }
                     else
+                    {
                         return true;                                            // Spell disabled for all maps
+                    }
                 }
 
                 return false;
             }
             else if (spellFlags & SPELL_DISABLE_DEPRECATED_SPELL)    // call not from spellcast
+            {
                 return true;
+            }
             else if (flags & SPELL_DISABLE_LOS)
+            {
                 return (spellFlags & SPELL_DISABLE_LOS) != 0;
+            }
 
             break;
         }
@@ -377,9 +395,13 @@ bool IsDisabledFor(DisableType type, uint32 entry, Unit const* unit, uint8 flags
             return false;
         case DISABLE_TYPE_QUEST:
             if (!unit)
+            {
                 return true;
+            }
             if (Player const* player = unit->ToPlayer())
+            {
                 return !player->isGameMaster();
+            }
             return true;
         case DISABLE_TYPE_BATTLEGROUND:
         case DISABLE_TYPE_OUTDOORPVP:

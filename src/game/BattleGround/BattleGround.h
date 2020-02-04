@@ -2,7 +2,7 @@
  * MaNGOS is a full featured server for World of Warcraft, supporting
  * the following clients: 1.12.x, 2.4.3, 3.3.5a, 4.3.4a and 5.4.8
  *
- * Copyright (C) 2005-2019  MaNGOS project <https://getmangos.eu>
+ * Copyright (C) 2005-2020 MaNGOS <https://getmangos.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -615,9 +615,13 @@ class BattleGround
         uint32 GetInvitedCount(Team team) const
         {
             if (team == ALLIANCE)
-                { return m_InvitedAlliance; }
+            {
+                return m_InvitedAlliance;
+            }
             else
-                { return m_InvitedHorde; }
+            {
+                return m_InvitedHorde;
+            }
         }
         /**
          * @brief
@@ -978,9 +982,13 @@ class BattleGround
         void UpdatePlayersCountByTeam(Team team, bool remove)
         {
             if (remove)
-                { --m_PlayersCount[GetTeamIndexByTeamId(team)]; }
+            {
+                --m_PlayersCount[GetTeamIndexByTeamId(team)];
+            }
             else
-                { ++m_PlayersCount[GetTeamIndexByTeamId(team)]; }
+            {
+                ++m_PlayersCount[GetTeamIndexByTeamId(team)];
+            }
         }
 
         /* Triggers handle */
@@ -1128,7 +1136,9 @@ class BattleGround
         bool IsActiveEvent(uint8 event1, uint8 event2)
         {
             if (m_ActiveEvents.find(event1) == m_ActiveEvents.end())
-                { return false; }
+            {
+                return false;
+            }
             return m_ActiveEvents[event1] == event2;
         }
         /**

@@ -15,7 +15,9 @@ bool ReachAreaTriggerAction::Execute(Event event)
 
     AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(triggerId);
     if(!atEntry)
+    {
         return false;
+    }
 
     AreaTrigger const* at = sObjectMgr.GetAreaTrigger(triggerId);
     if (!at)
@@ -33,7 +35,7 @@ bool ReachAreaTriggerAction::Execute(Event event)
         ai->TellMaster("I won't follow: I don't meet the conditions");
         return false;
     }
-    
+
     if (bot->GetMapId() != atEntry->mapid || bot->GetDistance(atEntry->x, atEntry->y, atEntry->z) > sPlayerbotAIConfig.sightDistance)
     {
         ai->TellMaster("I won't follow: too far away");
@@ -65,11 +67,15 @@ bool AreaTriggerAction::Execute(Event event)
 
     AreaTriggerEntry const* atEntry = sAreaTriggerStore.LookupEntry(triggerId);
     if(!atEntry)
+    {
         return false;
+    }
 
     AreaTrigger const* at = sObjectMgr.GetAreaTrigger(triggerId);
     if (!at)
+    {
         return true;
+    }
 
     ai->ChangeStrategy("-follow,+stay", BOT_STATE_NON_COMBAT);
 

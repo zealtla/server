@@ -2,7 +2,7 @@
  * MaNGOS is a full featured server for World of Warcraft, supporting
  * the following clients: 1.12.x, 2.4.3, 3.3.5a, 4.3.4a and 5.4.8
  *
- * Copyright (C) 2005-2019  MaNGOS project <https://getmangos.eu>
+ * Copyright (C) 2005-2020 MaNGOS <https://getmangos.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,9 @@ bool WorldSession::processChatmessageFurtherAfterSecurityChecks(std::string& msg
 
         // strip invisible characters for non-addon messages
         if (sWorld.getConfig(CONFIG_BOOL_CHAT_FAKE_MESSAGE_PREVENTING))
-            { stripLineInvisibleChars(msg); }
+        {
+            stripLineInvisibleChars(msg);
+        }
 
         if (sWorld.getConfig(CONFIG_UINT32_CHAT_STRICT_LINK_CHECKING_SEVERITY) && GetSecurity() < SEC_MODERATOR
             && !ChatHandler(this).isValidChatMessage(msg.c_str()))
@@ -69,7 +71,9 @@ bool WorldSession::processChatmessageFurtherAfterSecurityChecks(std::string& msg
             sLog.outError("Player %s (GUID: %u) sent a chatmessage with an invalid link: %s", GetPlayer()->GetName(),
                           GetPlayer()->GetGUIDLow(), msg.c_str());
             if (sWorld.getConfig(CONFIG_UINT32_CHAT_STRICT_LINK_CHECKING_KICK))
-                { KickPlayer(); }
+            {
+                KickPlayer();
+            }
             return false;
         }
     }
@@ -113,19 +117,25 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
     {
         // Disabled addon channel?
         if (!sWorld.getConfig(CONFIG_BOOL_ADDON_CHANNEL))
-        { return; }
+        {
+            return;
+        }
     }
     // LANG_ADDON should not be changed nor be affected by flood control
     else
     {
         // send in universal language if player in .gmon mode (ignore spell effects)
         if (_player->isGameMaster())
-            { lang = LANG_UNIVERSAL; }
+        {
+            lang = LANG_UNIVERSAL;
+        }
         else
         {
             // send in universal language in two side iteration allowed mode
             if (sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_CHAT))
-                { lang = LANG_UNIVERSAL; }
+            {
+                lang = LANG_UNIVERSAL;
+            }
             else
             {
                 switch (type)
@@ -136,13 +146,17 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
                     case CHAT_MSG_RAID_WARNING:
                         // allow two side chat at group channel if two side group allowed
                         if (sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_GROUP))
-                            { lang = LANG_UNIVERSAL; }
+                        {
+                            lang = LANG_UNIVERSAL;
+                        }
                         break;
                     case CHAT_MSG_GUILD:
                     case CHAT_MSG_OFFICER:
                         // allow two side chat at guild channel if two side guild allowed
                         if (sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_GUILD))
-                            { lang = LANG_UNIVERSAL; }
+                        {
+                            lang = LANG_UNIVERSAL;
+                        }
                         break;
                 }
             }
@@ -150,7 +164,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             // but overwrite it by SPELL_AURA_MOD_LANGUAGE auras (only single case used)
             Unit::AuraList const& ModLangAuras = _player->GetAurasByType(SPELL_AURA_MOD_LANGUAGE);
             if (!ModLangAuras.empty())
-                { lang = ModLangAuras.front()->GetModifier()->m_miscvalue; }
+            {
+                lang = ModLangAuras.front()->GetModifier()->m_miscvalue;
+            }
         }
 
         if (type != CHAT_MSG_AFK && type != CHAT_MSG_DND)
@@ -176,22 +192,32 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             recv_data >> msg;
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             if (ChatHandler(this).ParseCommands(msg.c_str()))
-                { break; }
+            {
+                break;
+            }
 
             if (!processChatmessageFurtherAfterSecurityChecks(msg, lang))
-                { return; }
+            {
+                return;
+            }
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             if (type == CHAT_MSG_SAY)
             {
 #ifdef ENABLE_ELUNA
                 if (!sEluna->OnChat(GetPlayer(), type, lang, msg))
+                {
                     return;
+                }
 #endif /* ENABLE_ELUNA */
                  GetPlayer()->Say(msg, lang);
             }
@@ -199,7 +225,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             {
 #ifdef ENABLE_ELUNA
                 if (!sEluna->OnChat(GetPlayer(), type, LANG_UNIVERSAL, msg))
+                {
                     return;
+                }
 #endif /* ENABLE_ELUNA */
                  GetPlayer()->TextEmote(msg);
             }
@@ -207,7 +235,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             {
 #ifdef ENABLE_ELUNA
                 if (!sEluna->OnChat(GetPlayer(), type, lang, msg))
+                {
                     return;
+                }
 #endif /* ENABLE_ELUNA */
                  GetPlayer()->Yell(msg, lang);
             }
@@ -220,13 +250,19 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             recv_data >> msg;
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             if (ChatHandler(this).ParseCommands(msg.c_str()))
-                { break; }
+            {
+                break;
+            }
 
             if (!processChatmessageFurtherAfterSecurityChecks(msg, lang))
-                { return; }
+            {
+                return;
+            }
 
             if (!normalizePlayerName(to))
             {
@@ -255,7 +291,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             // Used by Eluna
 #ifdef ENABLE_ELUNA
             if (!sEluna->OnChat(GetPlayer(), type, lang, msg, player))
+            {
                 return;
+            }
 #endif /* ENABLE_ELUNA */
 #ifdef ENABLE_PLAYERBOTS
             if (player->GetPlayerbotAI())
@@ -275,16 +313,24 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             recv_data >> msg;
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             if (ChatHandler(this).ParseCommands(msg.c_str()))
-                { break; }
+            {
+                break;
+            }
 
             if (!processChatmessageFurtherAfterSecurityChecks(msg, lang))
-                { return; }
+            {
+                return;
+            }
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             // if player is in battleground, he can not say to battleground members by /p
             Group* group = GetPlayer()->GetOriginalGroup();
@@ -292,13 +338,17 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             {
                 group = _player->GetGroup();
                 if (!group || group->isBGGroup())
-                    { return; }
+                {
+                    return;
+                }
             }
 
             // Used by Eluna
 #ifdef ENABLE_ELUNA
             if (!sEluna->OnChat(GetPlayer(), type, lang, msg, group))
+            {
                 return;
+            }
 #endif /* ENABLE_ELUNA */
 
 #ifdef ENABLE_PLAYERBOTS
@@ -326,16 +376,24 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             recv_data >> msg;
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             if (ChatHandler(this).ParseCommands(msg.c_str()))
-                { break; }
+            {
+                break;
+            }
 
             if (!processChatmessageFurtherAfterSecurityChecks(msg, lang))
-                { return; }
+            {
+                return;
+            }
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             if (GetPlayer()->GetGuildId())
                 if (Guild* guild = sGuildMgr.GetGuildById(GetPlayer()->GetGuildId()))
@@ -343,7 +401,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
                     // Used by Eluna
 #ifdef ENABLE_ELUNA
                     if (!sEluna->OnChat(GetPlayer(), type, lang, msg, guild))
+                    {
                         return;
+                    }
 #endif /* ENABLE_ELUNA */
 
                     guild->BroadcastToGuild(this, msg, lang == LANG_ADDON ? LANG_ADDON : LANG_UNIVERSAL);
@@ -370,16 +430,24 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             recv_data >> msg;
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             if (ChatHandler(this).ParseCommands(msg.c_str()))
-                { break; }
+            {
+                break;
+            }
 
             if (!processChatmessageFurtherAfterSecurityChecks(msg, lang))
-                { return; }
+            {
+                return;
+            }
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             if (GetPlayer()->GetGuildId())
                 if (Guild* guild = sGuildMgr.GetGuildById(GetPlayer()->GetGuildId()))
@@ -387,7 +455,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
                     // Used by Eluna
 #ifdef ENABLE_ELUNA
                     if (!sEluna->OnChat(GetPlayer(), type, lang, msg, guild))
+                    {
                         return;
+                    }
 #endif /* ENABLE_ELUNA */
 
                     guild->BroadcastToOfficers(this, msg, lang == LANG_ADDON ? LANG_ADDON : LANG_UNIVERSAL);
@@ -401,16 +471,24 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             recv_data >> msg;
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             if (ChatHandler(this).ParseCommands(msg.c_str()))
-                { break; }
+            {
+                break;
+            }
 
             if (!processChatmessageFurtherAfterSecurityChecks(msg, lang))
-                { return; }
+            {
+                return;
+            }
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             // if player is in battleground, he can not say to battleground members by /ra
             Group* group = GetPlayer()->GetOriginalGroup();
@@ -418,13 +496,17 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             {
                 group = GetPlayer()->GetGroup();
                 if (!group || group->isBGGroup() || !group->isRaidGroup())
-                    { return; }
+                {
+                    return;
+                }
             }
 
             // Used by Eluna
 #ifdef ENABLE_ELUNA
             if (!sEluna->OnChat(GetPlayer(), type, lang, msg, group))
+            {
                 return;
+            }
 #endif /* ENABLE_ELUNA */
 
 #ifdef ENABLE_PLAYERBOTS
@@ -450,16 +532,24 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             recv_data >> msg;
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             if (ChatHandler(this).ParseCommands(msg.c_str()))
-                { break; }
+            {
+                break;
+            }
 
             if (!processChatmessageFurtherAfterSecurityChecks(msg, lang))
-                { return; }
+            {
+                return;
+            }
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             // if player is in battleground, he can not say to battleground members by /ra
             Group* group = GetPlayer()->GetOriginalGroup();
@@ -467,13 +557,17 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             {
                 group = GetPlayer()->GetGroup();
                 if (!group || group->isBGGroup() || !group->isRaidGroup() || !group->IsLeader(_player->GetObjectGuid()))
-                    { return; }
+                {
+                    return;
+                }
             }
 
             // Used by Eluna
 #ifdef ENABLE_ELUNA
             if (!sEluna->OnChat(GetPlayer(), type, lang, msg, group))
+            {
                 return;
+            }
 #endif /* ENABLE_ELUNA */
 
 #ifdef ENABLE_PLAYERBOTS
@@ -500,10 +594,14 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             recv_data >> msg;
 
             if (!processChatmessageFurtherAfterSecurityChecks(msg, lang))
-                { return; }
+            {
+                return;
+            }
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             Group* group = GetPlayer()->GetGroup();
             if (!group || !group->isRaidGroup() ||
@@ -513,7 +611,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             // Used by Eluna
 #ifdef ENABLE_ELUNA
             if (!sEluna->OnChat(GetPlayer(), type, lang, msg, group))
+            {
                 return;
+            }
 #endif /* ENABLE_ELUNA */
 
 #ifdef ENABLE_PLAYERBOTS
@@ -541,20 +641,28 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             recv_data >> msg;
 
             if (!processChatmessageFurtherAfterSecurityChecks(msg, lang))
-                { return; }
+            {
+                return;
+            }
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             // battleground raid is always in Player->GetGroup(), never in GetOriginalGroup()
             Group* group = GetPlayer()->GetGroup();
             if (!group || !group->isBGGroup())
-                { return; }
+            {
+                return;
+            }
 
             // Used by Eluna
 #ifdef ENABLE_ELUNA
             if (!sEluna->OnChat(GetPlayer(), type, lang, msg, group))
+            {
                 return;
+            }
 #endif /* ENABLE_ELUNA */
 
             WorldPacket data;
@@ -568,20 +676,28 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             recv_data >> msg;
 
             if (!processChatmessageFurtherAfterSecurityChecks(msg, lang))
-                { return; }
+            {
+                return;
+            }
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             // battleground raid is always in Player->GetGroup(), never in GetOriginalGroup()
             Group* group = GetPlayer()->GetGroup();
             if (!group || !group->isBGGroup() || !group->IsLeader(GetPlayer()->GetObjectGuid()))
-                { return; }
+            {
+                return;
+            }
 
             // Used by Eluna
 #ifdef ENABLE_ELUNA
             if (!sEluna->OnChat(GetPlayer(), type, lang, msg, group))
+            {
                 return;
+            }
 #endif /* ENABLE_ELUNA */
 
             WorldPacket data;
@@ -596,10 +712,14 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             recv_data >> msg;
 
             if (!processChatmessageFurtherAfterSecurityChecks(msg, lang))
-                { return; }
+            {
+                return;
+            }
 
             if (msg.empty())
-                { break; }
+            {
+                break;
+            }
 
             if (ChannelMgr* cMgr = channelMgr(_player->GetTeam()))
             {
@@ -608,7 +728,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
                     // Used by Eluna
 #ifdef ENABLE_ELUNA
                     if (!sEluna->OnChat(GetPlayer(), type, lang, msg, chn))
+                    {
                         return;
+                    }
 #endif /* ENABLE_ELUNA */
 #ifdef ENABLE_PLAYERBOTS
                     if (_player->GetPlayerbotMgr() && chn->GetFlags() & 0x18)
@@ -617,10 +739,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
                     }
                     sRandomPlayerbotMgr.HandleCommand(type, msg, *_player);
 #endif /* ENABLE_PLAYERBOTS */
-                    chn->Say(_player, msg.c_str(), lang); 
+                    chn->Say(_player, msg.c_str(), lang);
                 }
             }
-
         } break;
 
         case CHAT_MSG_AFK:
@@ -642,14 +763,18 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
                     _player->autoReplyMsg = msg.empty() ? GetMangosString(LANG_PLAYER_AFK_DEFAULT) : msg;
 
                     if (_player->isDND())
-                        { _player->ToggleDND(); }
+                    {
+                        _player->ToggleDND();
+                    }
 
                     _player->ToggleAFK();
                 }
                 // Used by Eluna
 #ifdef ENABLE_ELUNA
                 if (!sEluna->OnChat(GetPlayer(), type, lang, msg))
+                {
                     return;
+                }
 #endif /* ENABLE_ELUNA */
             }
             break;
@@ -671,14 +796,18 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
                 _player->autoReplyMsg = msg.empty() ? GetMangosString(LANG_PLAYER_DND_DEFAULT) : msg;
 
                 if (_player->isAFK())
-                    { _player->ToggleAFK(); }
+                {
+                    _player->ToggleAFK();
+                }
 
                 _player->ToggleDND();
             }
             // Used by Eluna
 #ifdef ENABLE_ELUNA
             if (!sEluna->OnChat(GetPlayer(), type, lang, msg))
+            {
                 return;
+            }
 #endif /* ENABLE_ELUNA */
 
             break;
@@ -693,7 +822,9 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
 void WorldSession::HandleEmoteOpcode(WorldPacket& recv_data)
 {
     if (!GetPlayer()->IsAlive() || GetPlayer()->hasUnitState(UNIT_STAT_DIED))
-        { return; }
+    {
+        return;
+    }
 
     uint32 emote;
     recv_data >> emote;
@@ -724,9 +855,13 @@ namespace MaNGOS
                 data << uint32(i_emote_num);
                 data << uint32(namlen);
                 if (namlen > 1)
-                    { data.append(nam, namlen); }
+                {
+                    data.append(nam, namlen);
+                }
                 else
-                    { data << uint8(0x00); }
+                {
+                    data << uint8(0x00);
+                }
             }
 
         private:
@@ -740,7 +875,9 @@ namespace MaNGOS
 void WorldSession::HandleTextEmoteOpcode(WorldPacket& recv_data)
 {
     if (!GetPlayer()->IsAlive())
-        { return; }
+    {
+        return;
+    }
 
     if (!GetPlayer()->CanSpeak())
     {
@@ -763,7 +900,9 @@ void WorldSession::HandleTextEmoteOpcode(WorldPacket& recv_data)
 
     EmotesTextEntry const* em = sEmotesTextStore.LookupEntry(text_emote);
     if (!em)
-        { return; }
+    {
+        return;
+    }
 
     uint32 emote_id = em->textid;
 
@@ -778,7 +917,9 @@ void WorldSession::HandleTextEmoteOpcode(WorldPacket& recv_data)
         {
             // in feign death state allowed only text emotes.
             if (GetPlayer()->hasUnitState(UNIT_STAT_DIED))
-                { break; }
+            {
+                break;
+            }
 
             GetPlayer()->HandleEmoteCommand(emote_id);
             break;
@@ -794,7 +935,9 @@ void WorldSession::HandleTextEmoteOpcode(WorldPacket& recv_data)
 
     // Send scripted event call
     if (unit && unit->GetTypeId() == TYPEID_UNIT && ((Creature*)unit)->AI())
-        { ((Creature*)unit)->AI()->ReceiveEmote(GetPlayer(), text_emote); }
+    {
+        ((Creature*)unit)->AI()->ReceiveEmote(GetPlayer(), text_emote);
+    }
 }
 
 void WorldSession::HandleChatIgnoredOpcode(WorldPacket& recv_data)
@@ -806,7 +949,9 @@ void WorldSession::HandleChatIgnoredOpcode(WorldPacket& recv_data)
 
     Player* player = sObjectMgr.GetPlayer(iguid);
     if (!player || !player->GetSession())
-        { return; }
+    {
+        return;
+    }
 
     WorldPacket data;
     ChatHandler::BuildChatPacket(data, CHAT_MSG_IGNORED, _player->GetName(), LANG_UNIVERSAL, CHAT_TAG_NONE, _player->GetObjectGuid());

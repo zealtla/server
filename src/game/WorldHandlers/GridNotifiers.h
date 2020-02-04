@@ -2,7 +2,7 @@
  * MaNGOS is a full featured server for World of Warcraft, supporting
  * the following clients: 1.12.x, 2.4.3, 3.3.5a, 4.3.4a and 5.4.8
  *
- * Copyright (C) 2005-2019  MaNGOS project <https://getmangos.eu>
+ * Copyright (C) 2005-2020 MaNGOS <https://getmangos.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,7 +151,9 @@ namespace MaNGOS
             i_check = caster;
             Unit* owner = i_check->GetOwner();
             if (owner)
-                { i_check = owner; }
+            {
+                i_check = owner;
+            }
         }
 
         template<class T> inline void Visit(GridRefManager<T>&) {}
@@ -258,30 +260,40 @@ namespace MaNGOS
         void Visit(GameObjectMapType& m)
         {
             for (GameObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-                { i_do(itr->getSource()); }
+            {
+                i_do(itr->getSource());
+            }
         }
 
         void Visit(PlayerMapType& m)
         {
             for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-                { i_do(itr->getSource()); }
+            {
+                i_do(itr->getSource());
+            }
         }
         void Visit(CreatureMapType& m)
         {
             for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-                { i_do(itr->getSource()); }
+            {
+                i_do(itr->getSource());
+            }
         }
 
         void Visit(CorpseMapType& m)
         {
             for (CorpseMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-                { i_do(itr->getSource()); }
+            {
+                i_do(itr->getSource());
+            }
         }
 
         void Visit(DynamicObjectMapType& m)
         {
             for (DynamicObjectMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-                { i_do(itr->getSource()); }
+            {
+                i_do(itr->getSource());
+            }
         }
 
         template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED>&) {}
@@ -387,12 +399,16 @@ namespace MaNGOS
         void Visit(PlayerMapType& m)
         {
             for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-                { i_do(itr->getSource()); }
+            {
+                i_do(itr->getSource());
+            }
         }
         void Visit(CreatureMapType& m)
         {
             for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-                { i_do(itr->getSource()); }
+            {
+                i_do(itr->getSource());
+            }
         }
 
         template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED>&) {}
@@ -450,7 +466,9 @@ namespace MaNGOS
         void Visit(CreatureMapType& m)
         {
             for (CreatureMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-                { i_do(itr->getSource()); }
+            {
+                i_do(itr->getSource());
+            }
         }
 
         template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED>&) {}
@@ -495,7 +513,9 @@ namespace MaNGOS
         void Visit(PlayerMapType& m)
         {
             for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)
-                { i_do(itr->getSource()); }
+            {
+                i_do(itr->getSource());
+            }
         }
 
         template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED>&) {}
@@ -517,7 +537,9 @@ namespace MaNGOS
             {
                 Camera* camera = itr->getSource();
                 if (camera->GetBody()->IsWithinDist(i_searcher, i_dist))
-                    { i_do(camera->GetOwner()); }
+                {
+                    i_do(camera->GetOwner());
+                }
             }
         }
         template<class NOT_INTERESTED> void Visit(GridRefManager<NOT_INTERESTED>&) {}
@@ -551,7 +573,9 @@ namespace MaNGOS
             bool operator()(Player* u)
             {
                 if (i_fobj->IsFriendlyTo(u) || u->IsAlive() || u->IsTaxiFlying())
-                    { return false; }
+                {
+                    return false;
+                }
 
                 return i_fobj->IsWithinDistInMap(u, i_range);
             }
@@ -593,10 +617,14 @@ namespace MaNGOS
             {
                 GameObjectInfo const* goInfo = go->GetGOInfo();
                 if (goInfo->type != GAMEOBJECT_TYPE_SPELL_FOCUS)
-                    { return false; }
+                {
+                    return false;
+                }
 
                 if (goInfo->spellFocus.focusId != i_focusId)
-                    { return false; }
+                {
+                    return false;
+                }
 
                 float dist = (float)goInfo->spellFocus.dist;
 
@@ -701,7 +729,9 @@ namespace MaNGOS
             bool operator()(GameObject* go)
             {
                 if (go->GetEntry() == i_entry && go->IsWithinDist3d(i_x, i_y, i_z, i_range))
-                    { return true; }
+                {
+                    return true;
+                }
 
                 return false;
             }
@@ -793,7 +823,9 @@ namespace MaNGOS
                     && i_obj->IsWithinDistInMap(u, i_range))
                     { return true; }
                 else
-                    { return false; }
+                {
+                    return false;
+                }
             }
         private:
             WorldObject const* i_obj;
@@ -828,9 +860,13 @@ namespace MaNGOS
             bool operator()(Unit* u)
             {
                 if (u->IsAlive() && i_obj->IsWithinDistInMap(u, i_range) && i_obj->IsFriendlyTo(u))
-                    { return true; }
+                {
+                    return true;
+                }
                 else
-                    { return false; }
+                {
+                    return false;
+                }
             }
         private:
             WorldObject const* i_obj;
@@ -845,7 +881,9 @@ namespace MaNGOS
             bool operator()(Unit* u)
             {
                 if (u->IsAlive() && i_obj->IsWithinDistInMap(u, i_range))
-                    { return true; }
+                {
+                    return true;
+                }
 
                 return false;
             }
@@ -894,18 +932,26 @@ namespace MaNGOS
             {
                 // Check contains checks for: live, non-selectable, non-attackable flags, flight check and GM check, ignore totems
                 if (!u->IsTargetableForAttack())
-                    { return false; }
+                {
+                    return false;
+                }
 
                 // ignore totems as AoE targets
                 if (u->GetTypeId() == TYPEID_UNIT && ((Creature*)u)->IsTotem())
-                    { return false; }
+                {
+                    return false;
+                }
 
                 // check visibility only for unit-like original casters
                 if (i_targetForUnit && !u->IsVisibleForOrDetect((Unit const*)i_originalCaster, i_originalCaster, false))
-                    { return false; }
+                {
+                    return false;
+                }
 
                 if ((i_targetForPlayer ? !i_originalCaster->IsFriendlyTo(u) : i_originalCaster->IsHostileTo(u)) && i_obj->IsWithinDistInMap(u, i_range))
-                    { return true; }
+                {
+                    return true;
+                }
 
                 return false;
             }
@@ -930,13 +976,19 @@ namespace MaNGOS
             {
                 // Check contains checks for: live, non-selectable, non-attackable flags, flight check and GM check, ignore totems
                 if (!u->IsTargetableForAttack())
-                    { return false; }
+                {
+                    return false;
+                }
 
                 if (u->GetTypeId() == TYPEID_UNIT && ((Creature*)u)->IsTotem())
-                    { return false; }
+                {
+                    return false;
+                }
 
                 if ((i_targetForPlayer ? !i_obj->IsFriendlyTo(u) : i_obj->IsHostileTo(u)) && i_obj->IsWithinDistInMap(u, i_range))
-                    { return true; }
+                {
+                    return true;
+                }
 
                 return false;
             }
@@ -959,13 +1011,19 @@ namespace MaNGOS
             {
                 // Check contains checks for: live, non-selectable, non-attackable flags, flight check and GM check, ignore totems
                 if (!u->IsTargetableForAttack())
-                    { return false; }
+                {
+                    return false;
+                }
 
                 if (u->GetTypeId() == TYPEID_UNIT && ((Creature*)u)->IsTotem())
-                    { return false; }
+                {
+                    return false;
+                }
 
                 if ((i_isFriendly ? i_obj->IsFriendlyTo(u) : i_obj->IsHostileTo(u)) && i_obj->IsWithinDistInMap(u, i_range))
-                    { return true; }
+                {
+                    return true;
+                }
 
                 return false;
             }
@@ -987,13 +1045,19 @@ namespace MaNGOS
             {
                 // Check contains checks for: live, non-selectable, non-attackable flags, flight check and GM check, ignore totems
                 if (!u->IsTargetableForAttack())
-                    { return; }
+                {
+                    return;
+                }
 
                 if (u->GetTypeId() == TYPEID_UNIT && ((Creature*)u)->IsTotem())
-                    { return; }
+                {
+                    return;
+                }
 
                 if ((i_isFriendly ? i_obj->IsFriendlyTo(u) : i_obj->IsHostileTo(u)) && i_obj->IsWithinDistInMap(u, i_range))
-                    { i_obj->Use(u); }
+                {
+                    i_obj->Use(u);
+                }
             }
         private:
             GameObject*         i_obj;
@@ -1046,7 +1110,9 @@ namespace MaNGOS
             bool operator()(Creature* u)
             {
                 if (u->IsAlive() && u->IsHostileTo(i_funit) && i_funit->IsWithinDistInMap(u, u->GetAttackDistance(i_funit)))
-                    { return true; }
+                {
+                    return true;
+                }
 
                 return false;
             }
@@ -1079,15 +1145,23 @@ namespace MaNGOS
             bool operator()(Creature* u)
             {
                 if (u == i_obj)
-                    { return false; }
+                {
+                    return false;
+                }
                 if (!u->CanAssistTo(i_obj, i_enemy))
-                    { return false; }
+                {
+                    return false;
+                }
 
                 if (!i_obj->IsWithinDistInMap(u, i_range))
-                    { return false; }
+                {
+                    return false;
+                }
 
                 if (!i_obj->IsWithinLOSInMap(u))
-                    { return false; }
+                {
+                    return false;
+                }
 
                 i_range = i_obj->GetDistance(u);            // use found unit range as new range limit for next check
                 return true;
@@ -1140,7 +1214,9 @@ namespace MaNGOS
             bool operator()(Unit* pUnit)
             {
                 if (pUnit->GetEntry() == m_uiEntry && m_pObject->IsWithinDist(pUnit, m_fRange, false))
-                    { return true; }
+                {
+                    return true;
+                }
 
                 return false;
             }
@@ -1164,7 +1240,9 @@ namespace MaNGOS
             bool operator()(Player* u)
             {
                 if (u->IsAlive() && i_obj->IsWithinDistInMap(u, i_range))
-                    { return true; }
+                {
+                    return true;
+                }
 
                 return false;
             }
@@ -1217,7 +1295,9 @@ namespace MaNGOS
             ~LocalizedPacketDo()
             {
                 for (size_t i = 0; i < i_data_cache.size(); ++i)
-                    { delete i_data_cache[i]; }
+                {
+                    delete i_data_cache[i];
+                }
             }
             void operator()(Player* p);
 
@@ -1238,7 +1318,9 @@ namespace MaNGOS
             {
                 for (size_t i = 0; i < i_data_cache.size(); ++i)
                     for (size_t j = 0; j < i_data_cache[i].size(); ++j)
-                        { delete i_data_cache[i][j]; }
+                    {
+                        delete i_data_cache[i][j];
+                    }
             }
             void operator()(Player* p);
 

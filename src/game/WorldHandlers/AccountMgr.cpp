@@ -2,7 +2,7 @@
  * MaNGOS is a full featured server for World of Warcraft, supporting
  * the following clients: 1.12.x, 2.4.3, 3.3.5a, 4.3.4a and 5.4.8
  *
- * Copyright (C) 2005-2019  MaNGOS project <https://getmangos.eu>
+ * Copyright (C) 2005-2020 MaNGOS <https://getmangos.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,10 +112,14 @@ AccountOpResult AccountMgr::ChangeUsername(uint32 accid, std::string new_uname, 
     delete result;
 
     if (utf8length(new_uname) > MAX_ACCOUNT_STR)
-        { return AOR_NAME_TOO_LONG; }
+    {
+        return AOR_NAME_TOO_LONG;
+    }
 
     if (utf8length(new_passwd) > MAX_ACCOUNT_STR)
-        { return AOR_PASS_TOO_LONG; }
+    {
+        return AOR_PASS_TOO_LONG;
+    }
 
     normalizeString(new_uname);
     normalizeString(new_passwd);
@@ -138,7 +142,9 @@ AccountOpResult AccountMgr::ChangePassword(uint32 accid, std::string new_passwd)
         { return AOR_NAME_NOT_EXIST; }                          // account doesn't exist
 
     if (utf8length(new_passwd) > MAX_ACCOUNT_STR)
-        { return AOR_PASS_TOO_LONG; }
+    {
+        return AOR_PASS_TOO_LONG;
+    }
 
     normalizeString(username);
     normalizeString(new_passwd);
@@ -156,7 +162,9 @@ uint32 AccountMgr::GetId(std::string username)
     LoginDatabase.escape_string(username);
     QueryResult* result = LoginDatabase.PQuery("SELECT id FROM account WHERE username = '%s'", username.c_str());
     if (!result)
-        { return 0; }
+    {
+        return 0;
+    }
     else
     {
         uint32 id = (*result)[0].GetUInt32();
@@ -203,14 +211,18 @@ uint32 AccountMgr::GetCharactersCount(uint32 acc_id)
         return charcount;
     }
     else
-        { return 0; }
+    {
+        return 0;
+    }
 }
 
 bool AccountMgr::CheckPassword(uint32 accid, std::string passwd)
 {
     std::string username;
     if (!GetName(accid, username))
-        { return false; }
+    {
+        return false;
+    }
 
     normalizeString(passwd);
     normalizeString(username);
@@ -231,10 +243,14 @@ bool AccountMgr::normalizeString(std::string& utf8str)
     size_t wstr_len = MAX_ACCOUNT_STR;
 
     if (!Utf8toWStr(utf8str, wstr_buf, wstr_len))
-        { return false; }
+    {
+        return false;
+    }
 
     for (uint32 i = 0; i <= wstr_len; ++i)
+    {
         wstr_buf[i] = wcharToUpperOnlyLatin(wstr_buf[i]);
+    }
 
     return WStrToUtf8(wstr_buf, wstr_len, utf8str);
 }

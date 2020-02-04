@@ -2,7 +2,7 @@
  * MaNGOS is a full featured server for World of Warcraft, supporting
  * the following clients: 1.12.x, 2.4.3, 3.3.5a, 4.3.4a and 5.4.8
  *
- * Copyright (C) 2005-2019  MaNGOS project <https://getmangos.eu>
+ * Copyright (C) 2005-2020 MaNGOS <https://getmangos.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,9 @@ void TemporarySummon::Update(uint32 update_diff,  uint32 diff)
                 m_timer -= update_diff;
             }
             else if (m_timer != m_lifetime)
-                { m_timer = m_lifetime; }
+            {
+                m_timer = m_lifetime;
+            }
 
             break;
         }
@@ -122,10 +124,14 @@ void TemporarySummon::Update(uint32 update_diff,  uint32 diff)
                     return;
                 }
                 else
-                    { m_timer -= update_diff; }
+                {
+                    m_timer -= update_diff;
+                }
             }
             else if (m_timer != m_lifetime)
-                { m_timer = m_lifetime; }
+            {
+                m_timer = m_lifetime;
+            }
             break;
         }
         case TEMPSUMMON_TIMED_OOC_OR_DEAD_DESPAWN:
@@ -145,10 +151,14 @@ void TemporarySummon::Update(uint32 update_diff,  uint32 diff)
                     return;
                 }
                 else
-                    { m_timer -= update_diff; }
+                {
+                    m_timer -= update_diff;
+                }
             }
             else if (m_timer != m_lifetime)
-                { m_timer = m_lifetime; }
+            {
+                m_timer = m_lifetime;
+            }
             break;
         }
         case TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN:
@@ -219,7 +229,9 @@ void TemporarySummon::UnSummon()
     if (GetSummonerGuid().IsCreature())
         if (Creature* sum = GetMap()->GetCreature(GetSummonerGuid()))
             if (sum->AI())
-                { sum->AI()->SummonedCreatureDespawn(this); }
+            {
+                sum->AI()->SummonedCreatureDespawn(this);
+            }
 
     AddObjectToRemoveList();
 }

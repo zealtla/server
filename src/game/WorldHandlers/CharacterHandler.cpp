@@ -2,7 +2,7 @@
  * MaNGOS is a full featured server for World of Warcraft, supporting
  * the following clients: 1.12.x, 2.4.3, 3.3.5a, 4.3.4a and 5.4.8
  *
- * Copyright (C) 2005-2019  MaNGOS project <https://getmangos.eu>
+ * Copyright (C) 2005-2020 MaNGOS <https://getmangos.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,7 +145,10 @@ class CharacterHandler
         }
         void HandlePlayerLoginCallback(QueryResult * /*dummy*/, SqlQueryHolder* holder)
         {
-            if (!holder) { return; }
+            if (!holder)
+            {
+                return;
+            }
             WorldSession* session = sWorld.FindSession(((LoginQueryHolder*)holder)->GetAccountId());
             if (!session)
             {
@@ -169,7 +172,9 @@ class CharacterHandler
         void HandlePlayerBotLoginCallback(QueryResult * dummy, SqlQueryHolder * holder)
         {
             if (!holder)
+            {
                 return;
+            }
 
             PlayerbotLoginQueryHolder* lqh = (PlayerbotLoginQueryHolder*)holder;
             if (sObjectMgr.GetPlayer(lqh->GetGuid()))
@@ -190,7 +195,9 @@ class CharacterHandler
             botSession->HandlePlayerLogin(lqh); // will delete lqh
             Player* bot = botSession->GetPlayer();
             if (!bot)
+            {
                 return;
+            }
 
             bool allowed = false;
             if (botAccountId == masterAccount)
@@ -217,11 +224,15 @@ void PlayerbotHolder::AddPlayerBot(uint64 playerGuid, uint32 masterAccountId)
 {
     // has bot already been added?
     if (sObjectMgr.GetPlayer(ObjectGuid(playerGuid)))
+    {
         return;
+    }
 
     uint32 accountId = sObjectMgr.GetPlayerAccountIdByGUID(ObjectGuid(playerGuid));
     if (accountId == 0)
+    {
         return;
+    }
 
     PlayerbotLoginQueryHolder *holder = new PlayerbotLoginQueryHolder(this, masterAccountId, accountId, ObjectGuid(playerGuid));
     if (!holder->Initialize())
@@ -248,7 +259,9 @@ void WorldSession::HandleCharEnum(QueryResult* result)
             uint32 guidlow = (*result)[0].GetUInt32();
             DETAIL_LOG("Build enum data for char guid %u from account %u.", guidlow, GetAccountId());
             if (Player::BuildEnumData(result, &data))
-                { ++num; }
+            {
+                ++num;
+            }
         }
         while (result->NextRow());
 
@@ -423,7 +436,9 @@ void WorldSession::HandleCharCreateOpcode(WorldPacket& recv_data)
             while (skipCinematics == CINEMATICS_SKIP_SAME_RACE && !have_same_race)
             {
                 if (!result2->NextRow())
-                    { break; }
+                {
+                    break;
+                }
 
                 field = result2->Fetch();
                 acc_race = field[0].GetUInt32();
@@ -480,7 +495,9 @@ void WorldSession::HandleCharDeleteOpcode(WorldPacket& recv_data)
 
     // can't delete loaded character
     if (sObjectMgr.GetPlayer(guid))
-        { return; }
+    {
+        return;
+    }
 
     uint32 accountId = 0;
     std::string name;
@@ -507,7 +524,9 @@ void WorldSession::HandleCharDeleteOpcode(WorldPacket& recv_data)
 
     // prevent deleting other players' characters using cheating tools
     if (accountId != GetAccountId())
-        { return; }
+    {
+        return;
+    }
 
     std::string IP_str = GetRemoteAddress();
     BASIC_LOG("Account: %d (IP: %s) Delete Character:[%s] (guid: %u)", GetAccountId(), IP_str.c_str(), name.c_str(), lowguid);
@@ -597,7 +616,9 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
 
     data.Initialize(SMSG_ACCOUNT_DATA_TIMES, 128);
     for (int i = 0; i < 32; ++i)
-        { data << uint32(0); }
+    {
+        data << uint32(0);
+    }
     SendPacket(&data);
 
     /* 1.12.1 does not have SMSG_MOTD, so we send a server message */
@@ -702,7 +723,9 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
 
         /* Set the start location to the player's racial starting point */
         if (ChrRacesEntry const* rEntry = sChrRacesStore.LookupEntry(pCurrChar->getRace()))
-            { pCurrChar->SendCinematicStart(rEntry->CinematicSequence); }
+        {
+            pCurrChar->SendCinematicStart(rEntry->CinematicSequence);
+        }
     }
 
     uint32 miscRequirement = 0;
@@ -716,7 +739,9 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
         // Some basic checks in case of a map without areatrigger
         MapEntry const* mapEntry = sMapStore.LookupEntry(pCurrChar->GetMapId());
         if (!mapEntry)
-            { lockStatus = AREA_LOCKSTATUS_UNKNOWN_ERROR; }
+        {
+            lockStatus = AREA_LOCKSTATUS_UNKNOWN_ERROR;
+        }
     }
 
     /* This code is run if we can not add the player to the map for some reason */
@@ -769,7 +794,9 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
     /* Send logon notification to player's group
      * This is sent after player is added to the world so that player receives it too */
     if (Group* group = pCurrChar->GetGroup())
-        { group->SendUpdate(); }
+    {
+        group->SendUpdate();
+    }
 
     /* Inform player's friends that player has come online */
     sSocialMgr.SendFriendStatus(pCurrChar, FRIEND_ONLINE, pCurrChar->GetObjectGuid(), true);
@@ -860,7 +887,9 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
         SendNotification(LANG_INVISIBLE_INVISIBLE);
         SpellEntry const* invisibleAuraInfo = sSpellStore.LookupEntry(sWorld.getConfig(CONFIG_UINT32_GM_INVISIBLE_AURA));
         if (invisibleAuraInfo && IsSpellAppliesAura(invisibleAuraInfo))
-            { pCurrChar->CastSpell(pCurrChar, invisibleAuraInfo, true); }
+        {
+            pCurrChar->CastSpell(pCurrChar, invisibleAuraInfo, true);
+        }
     }
 
     std::string IP_str = GetRemoteAddress();
@@ -869,7 +898,9 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
 
     /* Make player stand up if they're not already stood up and not stunned */
     if (!pCurrChar->IsStandState() && !pCurrChar->hasUnitState(UNIT_STAT_STUNNED))
-        { pCurrChar->SetStandState(UNIT_STAND_STATE_STAND); }
+    {
+        pCurrChar->SetStandState(UNIT_STAND_STATE_STAND);
+    }
 
     m_playerLoading = false;
 
@@ -923,13 +954,17 @@ void WorldSession::HandleTutorialFlagOpcode(WorldPacket& recv_data)
 void WorldSession::HandleTutorialClearOpcode(WorldPacket & /*recv_data*/)
 {
     for (int i = 0; i < 8; ++i)
-        { SetTutorialInt(i, 0xFFFFFFFF); }
+    {
+        SetTutorialInt(i, 0xFFFFFFFF);
+    }
 }
 
 void WorldSession::HandleTutorialResetOpcode(WorldPacket & /*recv_data*/)
 {
     for (int i = 0; i < 8; ++i)
-        { SetTutorialInt(i, 0x00000000); }
+    {
+        SetTutorialInt(i, 0x00000000);
+    }
 }
 
 void WorldSession::HandleSetWatchedFactionOpcode(WorldPacket& recv_data)

@@ -2,7 +2,7 @@
  * MaNGOS is a full featured server for World of Warcraft, supporting
  * the following clients: 1.12.x, 2.4.3, 3.3.5a, 4.3.4a and 5.4.8
  *
- * Copyright (C) 2005-2019  MaNGOS project <https://getmangos.eu>
+ * Copyright (C) 2005-2020 MaNGOS <https://getmangos.eu>
  * Copyright (C) 2008-2015 TrinityCore <http://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -248,7 +248,9 @@ uint32 Warden::BuildChecksum(const uint8* data, uint32 length)
     SHA1(data, length, hash.bytes.bytes);
     uint32 checkSum = 0;
     for (uint8 i = 0; i < 5; ++i)
+    {
         checkSum = checkSum ^ hash.ints.ints[i];
+    }
 
     return checkSum;
 }
@@ -295,7 +297,9 @@ std::string Warden::Penalty(WardenCheck* check /*= NULL*/)
 void WorldSession::HandleWardenDataOpcode(WorldPacket& recvData)
 {
     if (!_warden || recvData.empty())
+    {
         return;
+    }
 
     _warden->DecryptData(const_cast<uint8*>(recvData.contents()), recvData.size());
     uint8 opcode;
@@ -343,10 +347,14 @@ void Warden::HandleData(ByteBuffer& /*buff*/)
 void Warden::LogPositiveToDB(WardenCheck* check)
 {
     if (!check || !_session)
+    {
         return;
+    }
 
     if (uint32(check->Action) < sWorld.getConfig(CONFIG_UINT32_WARDEN_DB_LOGLEVEL))
+    {
         return;
+    }
 
     static SqlStatementID insWardenPositive;
 

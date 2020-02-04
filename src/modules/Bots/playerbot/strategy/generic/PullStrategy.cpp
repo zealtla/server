@@ -20,10 +20,12 @@ private:
     string action;
 };
 
-float MagePullMultiplier::GetValue(Action* action) 
+float MagePullMultiplier::GetValue(Action* action)
 {
-    if (!action) 
+    if (!action)
+    {
         return 1.0f;
+    }
 
     string name = action->getName();
     if (this->action == name ||

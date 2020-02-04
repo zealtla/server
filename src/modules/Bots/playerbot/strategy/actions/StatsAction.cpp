@@ -88,14 +88,18 @@ uint32 StatsAction::EstRepairAll()
     uint32 TotalCost = 0;
     // equipped, backpack, bags itself
     for(int i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_ITEM_END; ++i)
+    {
         TotalCost += EstRepair(( (INVENTORY_SLOT_BAG_0 << 8) | i ));
+    }
 
     // bank, buyback and keys not repaired
 
     // items in inventory bags
     for(int j = INVENTORY_SLOT_BAG_START; j < INVENTORY_SLOT_BAG_END; ++j)
         for(int i = 0; i < MAX_BAG_SIZE; ++i)
+        {
             TotalCost += EstRepair(( (j << 8) | i ));
+        }
     return TotalCost;
 }
 
@@ -105,11 +109,15 @@ uint32 StatsAction::EstRepair(uint16 pos)
 
     uint32 TotalCost = 0;
     if(!item)
+    {
         return TotalCost;
+    }
 
     uint32 maxDurability = item->GetUInt32Value(ITEM_FIELD_MAXDURABILITY);
     if(!maxDurability)
+    {
         return TotalCost;
+    }
 
     uint32 curDurability = item->GetUInt32Value(ITEM_FIELD_DURABILITY);
 

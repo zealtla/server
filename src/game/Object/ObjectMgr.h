@@ -2,7 +2,7 @@
  * MaNGOS is a full featured server for World of Warcraft, supporting
  * the following clients: 1.12.x, 2.4.3, 3.3.5a, 4.3.4a and 5.4.8
  *
- * Copyright (C) 2005-2019  MaNGOS project <https://getmangos.eu>
+ * Copyright (C) 2005-2020 MaNGOS <https://getmangos.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -507,17 +507,29 @@ class ObjectMgr
 
         PlayerClassInfo const* GetPlayerClassInfo(uint32 class_) const
         {
-            if (class_ >= MAX_CLASSES) { return NULL; }
+            if (class_ >= MAX_CLASSES)
+            {
+                return NULL;
+            }
             return &playerClassInfo[class_];
         }
         void GetPlayerClassLevelInfo(uint32 class_, uint32 level, PlayerClassLevelInfo* info) const;
 
         PlayerInfo const* GetPlayerInfo(uint32 race, uint32 class_) const
         {
-            if (race   >= MAX_RACES)   { return NULL; }
-            if (class_ >= MAX_CLASSES) { return NULL; }
+            if (race   >= MAX_RACES)
+            {
+                return NULL;
+            }
+            if (class_ >= MAX_CLASSES)
+            {
+                return NULL;
+            }
             PlayerInfo const* info = &playerInfo[race][class_];
-            if (info->displayId_m == 0 || info->displayId_f == 0) { return NULL; }
+            if (info->displayId_m == 0 || info->displayId_f == 0)
+            {
+                return NULL;
+            }
             return info;
         }
         void GetPlayerLevelInfo(uint32 race, uint32 class_, uint32 level, PlayerLevelInfo* info) const;
@@ -547,7 +559,9 @@ class ObjectMgr
         {
             QuestAreaTriggerMap::const_iterator itr = mQuestAreaTriggerMap.find(Trigger_ID);
             if (itr != mQuestAreaTriggerMap.end())
-                { return itr->second; }
+            {
+                return itr->second;
+            }
             return 0;
         }
         bool IsTavernAreaTrigger(uint32 Trigger_ID) const
@@ -572,7 +586,9 @@ class ObjectMgr
         {
             AreaTriggerMap::const_iterator itr = mAreaTriggers.find(trigger);
             if (itr != mAreaTriggers.end())
-                { return &itr->second; }
+            {
+                return &itr->second;
+            }
             return NULL;
         }
 
@@ -583,7 +599,9 @@ class ObjectMgr
         {
             RepRewardRateMap::const_iterator itr = m_RepRewardRateMap.find(factionId);
             if (itr != m_RepRewardRateMap.end())
-                { return &itr->second; }
+            {
+                return &itr->second;
+            }
 
             return NULL;
         }
@@ -592,7 +610,9 @@ class ObjectMgr
         {
             RepOnKillMap::const_iterator itr = mRepOnKill.find(id);
             if (itr != mRepOnKill.end())
-                { return &itr->second; }
+            {
+                return &itr->second;
+            }
             return NULL;
         }
 
@@ -600,7 +620,9 @@ class ObjectMgr
         {
             RepSpilloverTemplateMap::const_iterator itr = m_RepSpilloverTemplateMap.find(factionId);
             if (itr != m_RepSpilloverTemplateMap.end())
-                { return &itr->second; }
+            {
+                return &itr->second;
+            }
 
             return NULL;
         }
@@ -609,7 +631,9 @@ class ObjectMgr
         {
             PointOfInterestMap::const_iterator itr = mPointsOfInterest.find(id);
             if (itr != mPointsOfInterest.end())
-                { return &itr->second; }
+            {
+                return &itr->second;
+            }
             return NULL;
         }
 
@@ -617,7 +641,9 @@ class ObjectMgr
         {
             PetCreateSpellMap::const_iterator itr = mPetCreateSpell.find(id);
             if (itr != mPetCreateSpell.end())
-                { return &itr->second; }
+            {
+                return &itr->second;
+            }
             return NULL;
         }
 
@@ -759,13 +785,17 @@ class ObjectMgr
         uint32 GenerateStaticCreatureLowGuid()
         {
             if (m_StaticCreatureGuids.GetNextAfterMaxUsed() >= m_FirstTemporaryCreatureGuid)
-            { return 0; }
+            {
+                return 0;
+            }
             return m_StaticCreatureGuids.Generate();
         }
         uint32 GenerateStaticGameObjectLowGuid()
         {
             if (m_StaticGameObjectGuids.GetNextAfterMaxUsed() >= m_FirstTemporaryGameObjectGuid)
-            { return 0; }
+            {
+                return 0;
+            }
             return m_StaticGameObjectGuids.Generate();
         }
 
@@ -816,9 +846,13 @@ class ObjectMgr
         {
             ItemTextMap::const_iterator itr = mItemTexts.find(id);
             if (itr != mItemTexts.end())
-                { return itr->second; }
+            {
+                return itr->second;
+            }
             else
-                { return "There is no info for this item"; }
+            {
+                return "There is no info for this item";
+            }
         }
 
         CreatureDataMap const* GetCreatureDataMap() const { return &mCreatureDataMap; }
@@ -826,7 +860,10 @@ class ObjectMgr
         CreatureDataPair const* GetCreatureDataPair(uint32 guid) const
         {
             CreatureDataMap::const_iterator itr = mCreatureDataMap.find(guid);
-            if (itr == mCreatureDataMap.end()) { return NULL; }
+            if (itr == mCreatureDataMap.end())
+            {
+                return NULL;
+            }
             return &*itr;
         }
 
@@ -847,7 +884,9 @@ class ObjectMgr
         {
             for (CreatureDataMap::const_iterator itr = mCreatureDataMap.begin(); itr != mCreatureDataMap.end(); ++itr)
                 if (worker(*itr))
-                    { break; }
+                {
+                    break;
+                }
         }
 
         ActiveCreatureGuidsOnMap const* GetActiveCreatureGuids() const { return &m_activeCreatures; }
@@ -855,7 +894,10 @@ class ObjectMgr
         CreatureLocale const* GetCreatureLocale(uint32 entry) const
         {
             CreatureLocaleMap::const_iterator itr = mCreatureLocaleMap.find(entry);
-            if (itr == mCreatureLocaleMap.end()) { return NULL; }
+            if (itr == mCreatureLocaleMap.end())
+            {
+                return NULL;
+            }
             return &itr->second;
         }
 
@@ -864,14 +906,20 @@ class ObjectMgr
         GameObjectLocale const* GetGameObjectLocale(uint32 entry) const
         {
             GameObjectLocaleMap::const_iterator itr = mGameObjectLocaleMap.find(entry);
-            if (itr == mGameObjectLocaleMap.end()) { return NULL; }
+            if (itr == mGameObjectLocaleMap.end())
+            {
+                return NULL;
+            }
             return &itr->second;
         }
 
         ItemLocale const* GetItemLocale(uint32 entry) const
         {
             ItemLocaleMap::const_iterator itr = mItemLocaleMap.find(entry);
-            if (itr == mItemLocaleMap.end()) { return NULL; }
+            if (itr == mItemLocaleMap.end())
+            {
+                return NULL;
+            }
             return &itr->second;
         }
 
@@ -880,7 +928,10 @@ class ObjectMgr
         QuestLocale const* GetQuestLocale(uint32 entry) const
         {
             QuestLocaleMap::const_iterator itr = mQuestLocaleMap.find(entry);
-            if (itr == mQuestLocaleMap.end()) { return NULL; }
+            if (itr == mQuestLocaleMap.end())
+            {
+                return NULL;
+            }
             return &itr->second;
         }
 
@@ -889,7 +940,10 @@ class ObjectMgr
         NpcTextLocale const* GetNpcTextLocale(uint32 entry) const
         {
             NpcTextLocaleMap::const_iterator itr = mNpcTextLocaleMap.find(entry);
-            if (itr == mNpcTextLocaleMap.end()) { return NULL; }
+            if (itr == mNpcTextLocaleMap.end())
+            {
+                return NULL;
+            }
             return &itr->second;
         }
 
@@ -900,21 +954,30 @@ class ObjectMgr
         PageTextLocale const* GetPageTextLocale(uint32 entry) const
         {
             PageTextLocaleMap::const_iterator itr = mPageTextLocaleMap.find(entry);
-            if (itr == mPageTextLocaleMap.end()) { return NULL; }
+            if (itr == mPageTextLocaleMap.end())
+            {
+                return NULL;
+            }
             return &itr->second;
         }
 
         GossipMenuItemsLocale const* GetGossipMenuItemsLocale(uint32 entry) const
         {
             GossipMenuItemsLocaleMap::const_iterator itr = mGossipMenuItemsLocaleMap.find(entry);
-            if (itr == mGossipMenuItemsLocaleMap.end()) { return NULL; }
+            if (itr == mGossipMenuItemsLocaleMap.end())
+            {
+                return NULL;
+            }
             return &itr->second;
         }
 
         PointOfInterestLocale const* GetPointOfInterestLocale(uint32 poi_id) const
         {
             PointOfInterestLocaleMap::const_iterator itr = mPointOfInterestLocaleMap.find(poi_id);
-            if (itr == mPointOfInterestLocaleMap.end()) { return NULL; }
+            if (itr == mPointOfInterestLocaleMap.end())
+            {
+                return NULL;
+            }
             return &itr->second;
         }
 
@@ -922,7 +985,10 @@ class ObjectMgr
         GameObjectDataPair const* GetGODataPair(uint32 guid) const
         {
             GameObjectDataMap::const_iterator itr = mGameObjectDataMap.find(guid);
-            if (itr == mGameObjectDataMap.end()) { return NULL; }
+            if (itr == mGameObjectDataMap.end())
+            {
+                return NULL;
+            }
             return &*itr;
         }
 
@@ -943,20 +1009,27 @@ class ObjectMgr
         {
             for (GameObjectDataMap::const_iterator itr = mGameObjectDataMap.begin(); itr != mGameObjectDataMap.end(); ++itr)
                 if (worker(*itr))                           // arg = GameObjectDataPair
-                    { break; }
+                {
+                    break;
+                }
         }
 
         MangosStringLocale const* GetMangosStringLocale(int32 entry) const
         {
             MangosStringLocaleMap::const_iterator itr = mMangosStringLocaleMap.find(entry);
-            if (itr == mMangosStringLocaleMap.end()) { return NULL; }
+            if (itr == mMangosStringLocaleMap.end())
+            {
+                return NULL;
+            }
             return &itr->second;
         }
         uint32 GetLoadedStringsCount(int32 minEntry) const
         {
             std::map<int32, uint32>::const_iterator itr = m_loadedStringCount.find(minEntry);
             if (itr != m_loadedStringCount.end())
-                { return itr->second; }
+            {
+                return itr->second;
+            }
             return 0;
         }
 
@@ -998,7 +1071,10 @@ class ObjectMgr
         GameTele const* GetGameTele(uint32 id) const
         {
             GameTeleMap::const_iterator itr = m_GameTeleMap.find(id);
-            if (itr == m_GameTeleMap.end()) { return NULL; }
+            if (itr == m_GameTeleMap.end())
+            {
+                return NULL;
+            }
             return &itr->second;
         }
 
@@ -1014,7 +1090,9 @@ class ObjectMgr
         {
             CacheNpcTextIdMap::const_iterator iter = m_mCacheNpcTextIdMap.find(entry);
             if (iter == m_mCacheNpcTextIdMap.end())
-                { return 0; }
+            {
+                return 0;
+            }
 
             return iter->second;
         }
@@ -1023,7 +1101,9 @@ class ObjectMgr
         {
             CacheTrainerSpellMap::const_iterator iter = m_mCacheTrainerSpellMap.find(entry);
             if (iter == m_mCacheTrainerSpellMap.end())
-                { return NULL; }
+            {
+                return NULL;
+            }
 
             return &iter->second;
         }
@@ -1032,7 +1112,9 @@ class ObjectMgr
         {
             CacheTrainerSpellMap::const_iterator iter = m_mCacheTrainerTemplateSpellMap.find(entry);
             if (iter == m_mCacheTrainerTemplateSpellMap.end())
-                { return NULL; }
+            {
+                return NULL;
+            }
 
             return &iter->second;
         }
@@ -1041,7 +1123,9 @@ class ObjectMgr
         {
             CacheVendorItemMap::const_iterator  iter = m_mCacheVendorItemMap.find(entry);
             if (iter == m_mCacheVendorItemMap.end())
-                { return NULL; }
+            {
+                return NULL;
+            }
 
             return &iter->second;
         }
@@ -1050,7 +1134,9 @@ class ObjectMgr
         {
             CacheVendorItemMap::const_iterator  iter = m_mCacheVendorTemplateItemMap.find(entry);
             if (iter == m_mCacheVendorTemplateItemMap.end())
-                { return NULL; }
+            {
+                return NULL;
+            }
 
             return &iter->second;
         }

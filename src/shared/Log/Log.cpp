@@ -2,7 +2,7 @@
  * MaNGOS is a full featured server for World of Warcraft, supporting
  * the following clients: 1.12.x, 2.4.3, 3.3.5a, 4.3.4a and 5.4.8
  *
- * Copyright (C) 2005-2019  MaNGOS project <https://getmangos.eu>
+ * Copyright (C) 2005-2020 MaNGOS <https://getmangos.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,9 +72,9 @@ enum LogType
 const int LogType_count = int(LogError) + 1;
 
 Log::Log() :
-    raLogfile(NULL), logfile(NULL), gmLogfile(NULL), charLogfile(NULL), dberLogfile(NULL), 
+    raLogfile(NULL), logfile(NULL), gmLogfile(NULL), charLogfile(NULL), dberLogfile(NULL),
 #ifdef ENABLE_ELUNA
-    elunaErrLogfile(NULL), 
+    elunaErrLogfile(NULL),
 #endif /* ENABLE_ELUNA */
     eventAiErLogfile(NULL), scriptErrLogFile(NULL), worldLogfile(NULL), wardenLogfile(NULL), m_colored(false),
     m_includeTime(false), m_gmlog_per_account(false), m_scriptLibName(NULL)
@@ -99,14 +99,20 @@ void Log::InitColors(const std::string& str)
         ss >> color[i];
 
         if (!ss)
-            { return; }
+        {
+            return;
+        }
 
         if (color[i] < 0 || color[i] >= Color_count)
-            { return; }
+        {
+            return;
+        }
     }
 
     for (int i = 0; i < LogType_count; ++i)
-        { m_colors[i] = Color(color[i]); }
+    {
+        m_colors[i] = Color(color[i]);
+    }
 
     m_colored = true;
 }
@@ -117,27 +123,21 @@ void Log::SetColor(bool stdout_stream, Color color)
 
     static WORD WinColorFG[Color_count] =
     {
-        0,                                                  // BLACK
-        FOREGROUND_RED,                                     // RED
-        FOREGROUND_GREEN,                                   // GREEN
-        FOREGROUND_RED | FOREGROUND_GREEN,                  // BROWN
-        FOREGROUND_BLUE,                                    // BLUE
-        FOREGROUND_RED |                    FOREGROUND_BLUE,// MAGENTA
-        FOREGROUND_GREEN | FOREGROUND_BLUE,                 // CYAN
-        FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,// WHITE
-        // YELLOW
-        FOREGROUND_RED | FOREGROUND_GREEN |                   FOREGROUND_INTENSITY,
-        // RED_BOLD
-        FOREGROUND_RED |                                      FOREGROUND_INTENSITY,
-        // GREEN_BOLD
-        FOREGROUND_GREEN |                   FOREGROUND_INTENSITY,
-        FOREGROUND_BLUE | FOREGROUND_INTENSITY,             // BLUE_BOLD
-        // MAGENTA_BOLD
-        FOREGROUND_RED |                    FOREGROUND_BLUE | FOREGROUND_INTENSITY,
-        // CYAN_BOLD
-        FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
-        // WHITE_BOLD
-        FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY
+        0,                                                                         // BLACK
+        FOREGROUND_RED,                                                            // RED
+        FOREGROUND_GREEN,                                                          // GREEN
+        FOREGROUND_RED | FOREGROUND_GREEN,                                         // BROWN
+        FOREGROUND_BLUE,                                                           // BLUE
+        FOREGROUND_RED |                    FOREGROUND_BLUE,                       // MAGENTA
+        FOREGROUND_GREEN | FOREGROUND_BLUE,                                        // CYAN
+        FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,                       // WHITE
+        FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY,                  // YELLOW
+        FOREGROUND_RED | FOREGROUND_INTENSITY,                                     // RED_BOLD
+        FOREGROUND_GREEN | FOREGROUND_INTENSITY,                                   // GREEN_BOLD
+        FOREGROUND_BLUE | FOREGROUND_INTENSITY,                                    // BLUE_BOLD
+        FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY,                   // MAGENTA_BOLD
+        FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,                 // CYAN_BOLD
+        FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY // WHITE_BOLD
     };
 
     HANDLE hConsole = GetStdHandle(stdout_stream ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
@@ -202,9 +202,13 @@ void Log::SetLogLevel(char* level)
     int32 newLevel = atoi((char*)level);
 
     if (newLevel < LOG_LVL_MINIMAL)
-        { newLevel = LOG_LVL_MINIMAL; }
+    {
+        newLevel = LOG_LVL_MINIMAL;
+    }
     else if (newLevel > LOG_LVL_DEBUG)
-        { newLevel = LOG_LVL_DEBUG; }
+    {
+        newLevel = LOG_LVL_DEBUG;
+    }
 
     m_logLevel = LogLevel(newLevel);
 
@@ -216,9 +220,13 @@ void Log::SetLogFileLevel(char* level)
     int32 newLevel = atoi((char*)level);
 
     if (newLevel < LOG_LVL_MINIMAL)
-        { newLevel = LOG_LVL_MINIMAL; }
+    {
+        newLevel = LOG_LVL_MINIMAL;
+    }
     else if (newLevel > LOG_LVL_DEBUG)
-        { newLevel = LOG_LVL_DEBUG; }
+    {
+        newLevel = LOG_LVL_DEBUG;
+    }
 
     m_logFileLevel = LogLevel(newLevel);
 
@@ -232,7 +240,9 @@ void Log::Initialize()
     if (!m_logsDir.empty())
     {
         if ((m_logsDir.at(m_logsDir.length() - 1) != '/') && (m_logsDir.at(m_logsDir.length() - 1) != '\\'))
-            { m_logsDir.append("/"); }
+        {
+            m_logsDir.append("/");
+        }
     }
 
     m_logsTimestamp = "_" + GetTimestampStr();
@@ -242,7 +252,9 @@ void Log::Initialize()
 
     m_gmlog_per_account = sConfig.GetBoolDefault("GmLogPerAccount", false);
     if (!m_gmlog_per_account)
-        { gmLogfile = openLogFile("GMLogFile", "GmLogTimestamp", "a"); }
+    {
+        gmLogfile = openLogFile("GMLogFile", "GmLogTimestamp", "a");
+    }
     else
     {
         // GM log settings for per account case
@@ -255,7 +267,9 @@ void Log::Initialize()
             if (dot_pos != m_gmlog_filename_format.npos)
             {
                 if (m_gmlog_timestamp)
-                    { m_gmlog_filename_format.insert(dot_pos, m_logsTimestamp); }
+                {
+                    m_gmlog_filename_format.insert(dot_pos, m_logsTimestamp);
+                }
 
                 m_gmlog_filename_format.insert(dot_pos, "_#%u");
             }
@@ -264,7 +278,9 @@ void Log::Initialize()
                 m_gmlog_filename_format += "_#%u";
 
                 if (m_gmlog_timestamp)
-                    { m_gmlog_filename_format += m_logsTimestamp; }
+                {
+                    m_gmlog_filename_format += m_logsTimestamp;
+                }
             }
 
             m_gmlog_filename_format = m_logsDir + m_gmlog_filename_format;
@@ -291,7 +307,9 @@ void Log::Initialize()
     for (int i = 0; i < LOG_FILTER_COUNT; ++i)
         if (*logFilterData[i].name)
             if (sConfig.GetBoolDefault(logFilterData[i].configName, logFilterData[i].defaultState))
-                { m_logFilter |= (1 << i); }
+            {
+                m_logFilter |= (1 << i);
+            }
 
     // Char log settings
     m_charLog_Dump = sConfig.GetBoolDefault("CharLogDump", false);
@@ -301,15 +319,21 @@ FILE* Log::openLogFile(char const* configFileName, char const* configTimeStampFl
 {
     std::string logfn = sConfig.GetStringDefault(configFileName, "");
     if (logfn.empty())
-        { return NULL; }
+    {
+        return NULL;
+    }
 
     if (configTimeStampFlag && sConfig.GetBoolDefault(configTimeStampFlag, false))
     {
         size_t dot_pos = logfn.find_last_of(".");
         if (dot_pos != logfn.npos)
-            { logfn.insert(dot_pos, m_logsTimestamp); }
+        {
+            logfn.insert(dot_pos, m_logsTimestamp);
+        }
         else
-            { logfn += m_logsTimestamp; }
+        {
+            logfn += m_logsTimestamp;
+        }
     }
 
     return fopen((m_logsDir + logfn).c_str(), mode);
@@ -318,7 +342,9 @@ FILE* Log::openLogFile(char const* configFileName, char const* configTimeStampFl
 FILE* Log::openGmlogPerAccount(uint32 account)
 {
     if (m_gmlog_filename_format.empty())
-        { return NULL; }
+    {
+        return NULL;
+    }
 
     char namebuf[MANGOS_PATH_MAX];
     snprintf(namebuf, MANGOS_PATH_MAX, m_gmlog_filename_format.c_str(), account);
@@ -369,7 +395,9 @@ std::string Log::GetTimestampStr()
 void Log::outString()
 {
     if (m_includeTime)
-        { outTime(); }
+    {
+        outTime();
+    }
     printf("\n");
     if (logfile)
     {
@@ -384,13 +412,19 @@ void Log::outString()
 void Log::outString(const char* str, ...)
 {
     if (!str)
-        { return; }
+    {
+        return;
+    }
 
     if (m_colored)
-        { SetColor(true, m_colors[LogNormal]); }
+    {
+        SetColor(true, m_colors[LogNormal]);
+    }
 
     if (m_includeTime)
-        { outTime(); }
+    {
+        outTime();
+    }
 
     va_list ap;
 
@@ -399,7 +433,9 @@ void Log::outString(const char* str, ...)
     va_end(ap);
 
     if (m_colored)
-        { ResetColor(true); }
+    {
+        ResetColor(true);
+    }
 
     printf("\n");
 
@@ -466,7 +502,9 @@ void Log::outError(const char* err, ...)
 void Log::outErrorDb()
 {
     if (m_includeTime)
-        { outTime(); }
+    {
+        outTime();
+    }
 
     fprintf(stderr, "\n");
 
@@ -490,13 +528,19 @@ void Log::outErrorDb()
 void Log::outErrorDb(const char* err, ...)
 {
     if (!err)
-        { return; }
+    {
+        return;
+    }
 
     if (m_colored)
-        { SetColor(false, m_colors[LogError]); }
+    {
+        SetColor(false, m_colors[LogError]);
+    }
 
     if (m_includeTime)
-        { outTime(); }
+    {
+        outTime();
+    }
 
     va_list ap;
 
@@ -505,7 +549,9 @@ void Log::outErrorDb(const char* err, ...)
     va_end(ap);
 
     if (m_colored)
-        { ResetColor(false); }
+    {
+        ResetColor(false);
+    }
 
     fprintf(stderr, "\n");
 
@@ -571,7 +617,9 @@ void Log::outErrorEluna() {}
 void Log::outErrorEluna(const char* err, ...)
 {
     if (!err)
+    {
         return;
+    }
 
     if (m_colored)
         SetColor(false, m_colors[LogError]);
@@ -626,7 +674,9 @@ void Log::outErrorEluna(const char* err, ...) {}
 void Log::outErrorEventAI()
 {
     if (m_includeTime)
-        { outTime(); }
+    {
+        outTime();
+    }
 
     fprintf(stderr, "\n");
 
@@ -650,13 +700,19 @@ void Log::outErrorEventAI()
 void Log::outErrorEventAI(const char* err, ...)
 {
     if (!err)
-        { return; }
+    {
+        return;
+    }
 
     if (m_colored)
-        { SetColor(false, m_colors[LogError]); }
+    {
+        SetColor(false, m_colors[LogError]);
+    }
 
     if (m_includeTime)
-        { outTime(); }
+    {
+        outTime();
+    }
 
     va_list ap;
 
@@ -665,7 +721,9 @@ void Log::outErrorEventAI(const char* err, ...)
     va_end(ap);
 
     if (m_colored)
-        { ResetColor(false); }
+    {
+        ResetColor(false);
+    }
 
     fprintf(stderr, "\n");
 
@@ -701,15 +759,21 @@ void Log::outErrorEventAI(const char* err, ...)
 void Log::outBasic(const char* str, ...)
 {
     if (!str)
-        { return; }
+    {
+        return;
+    }
 
     if (m_logLevel >= LOG_LVL_BASIC)
     {
         if (m_colored)
-            { SetColor(true, m_colors[LogDetails]); }
+        {
+            SetColor(true, m_colors[LogDetails]);
+        }
 
         if (m_includeTime)
-            { outTime(); }
+        {
+            outTime();
+        }
 
         va_list ap;
         va_start(ap, str);
@@ -717,7 +781,9 @@ void Log::outBasic(const char* str, ...)
         va_end(ap);
 
         if (m_colored)
-            { ResetColor(true); }
+        {
+            ResetColor(true);
+        }
 
         printf("\n");
     }
@@ -739,15 +805,21 @@ void Log::outBasic(const char* str, ...)
 void Log::outDetail(const char* str, ...)
 {
     if (!str)
-        { return; }
+    {
+        return;
+    }
 
     if (m_logLevel >= LOG_LVL_DETAIL)
     {
         if (m_colored)
-            { SetColor(true, m_colors[LogDetails]); }
+        {
+            SetColor(true, m_colors[LogDetails]);
+        }
 
         if (m_includeTime)
-            { outTime(); }
+        {
+            outTime();
+        }
 
         va_list ap;
         va_start(ap, str);
@@ -755,7 +827,9 @@ void Log::outDetail(const char* str, ...)
         va_end(ap);
 
         if (m_colored)
-            { ResetColor(true); }
+        {
+            ResetColor(true);
+        }
 
         printf("\n");
     }
@@ -779,15 +853,21 @@ void Log::outDetail(const char* str, ...)
 void Log::outDebug(const char* str, ...)
 {
     if (!str)
-        { return; }
+    {
+        return;
+    }
 
     if (m_logLevel >= LOG_LVL_DEBUG)
     {
         if (m_colored)
-            { SetColor(true, m_colors[LogDebug]); }
+        {
+            SetColor(true, m_colors[LogDebug]);
+        }
 
         if (m_includeTime)
-            { outTime(); }
+        {
+            outTime();
+        }
 
         va_list ap;
         va_start(ap, str);
@@ -795,7 +875,9 @@ void Log::outDebug(const char* str, ...)
         va_end(ap);
 
         if (m_colored)
-            { ResetColor(true); }
+        {
+            ResetColor(true);
+        }
 
         printf("\n");
     }
@@ -819,15 +901,21 @@ void Log::outDebug(const char* str, ...)
 void Log::outCommand(uint32 account, const char* str, ...)
 {
     if (!str)
-        { return; }
+    {
+        return;
+    }
 
     if (m_logLevel >= LOG_LVL_DETAIL)
     {
         if (m_colored)
-            { SetColor(true, m_colors[LogDetails]); }
+        {
+            SetColor(true, m_colors[LogDetails]);
+        }
 
         if (m_includeTime)
-            { outTime(); }
+        {
+            outTime();
+        }
 
         va_list ap;
         va_start(ap, str);
@@ -835,7 +923,9 @@ void Log::outCommand(uint32 account, const char* str, ...)
         va_end(ap);
 
         if (m_colored)
-            { ResetColor(true); }
+        {
+            ResetColor(true);
+        }
 
         printf("\n");
     }
@@ -948,7 +1038,9 @@ void Log::outWarden(const char* str, ...)
 void Log::outChar(const char* str, ...)
 {
     if (!str)
-        { return; }
+    {
+        return;
+    }
 
     if (charLogfile)
     {
@@ -965,7 +1057,9 @@ void Log::outChar(const char* str, ...)
 void Log::outErrorScriptLib()
 {
     if (m_includeTime)
-        { outTime(); }
+    {
+        outTime();
+    }
 
     fprintf(stderr, "\n");
 
@@ -973,9 +1067,13 @@ void Log::outErrorScriptLib()
     {
         outTimestamp(logfile);
         if (m_scriptLibName)
-            { fprintf(logfile, "<%s ERROR:> ", m_scriptLibName); }
+        {
+            fprintf(logfile, "<%s ERROR:> ", m_scriptLibName);
+        }
         else
-            { fprintf(logfile, "<Scripting Library ERROR>: "); }
+        {
+            fprintf(logfile, "<Scripting Library ERROR>: ");
+        }
         fflush(logfile);
     }
 
@@ -992,13 +1090,19 @@ void Log::outErrorScriptLib()
 void Log::outErrorScriptLib(const char* err, ...)
 {
     if (!err)
-        { return; }
+    {
+        return;
+    }
 
     if (m_colored)
-        { SetColor(false, m_colors[LogError]); }
+    {
+        SetColor(false, m_colors[LogError]);
+    }
 
     if (m_includeTime)
-        { outTime(); }
+    {
+        outTime();
+    }
 
     va_list ap;
 
@@ -1007,7 +1111,9 @@ void Log::outErrorScriptLib(const char* err, ...)
     va_end(ap);
 
     if (m_colored)
-        { ResetColor(false); }
+    {
+        ResetColor(false);
+    }
 
     fprintf(stderr, "\n");
 
@@ -1015,9 +1121,13 @@ void Log::outErrorScriptLib(const char* err, ...)
     {
         outTimestamp(logfile);
         if (m_scriptLibName)
-            { fprintf(logfile, "<%s ERROR>: ", m_scriptLibName); }
+        {
+            fprintf(logfile, "<%s ERROR>: ", m_scriptLibName);
+        }
         else
-            { fprintf(logfile, "<Scripting Library ERROR>: "); }
+        {
+            fprintf(logfile, "<Scripting Library ERROR>: ");
+        }
 
         va_start(ap, err);
         vfprintf(logfile, err, ap);
@@ -1046,7 +1156,9 @@ void Log::outErrorScriptLib(const char* err, ...)
 void Log::outWorldPacketDump(uint32 socket, uint32 opcode, char const* opcodeName, ByteBuffer const* packet, bool incoming)
 {
     if (!worldLogfile)
-        { return; }
+    {
+        return;
+    }
 
     ACE_GUARD(ACE_Thread_Mutex, GuardObj, m_worldLogMtx);
 
@@ -1060,7 +1172,9 @@ void Log::outWorldPacketDump(uint32 socket, uint32 opcode, char const* opcodeNam
     while (p < packet->size())
     {
         for (size_t j = 0; j < 16 && p < packet->size(); ++j)
-            { fprintf(worldLogfile, "%.2X ", (*packet)[p++]); }
+        {
+            fprintf(worldLogfile, "%.2X ", (*packet)[p++]);
+        }
 
         fprintf(worldLogfile, "\n");
     }
@@ -1081,7 +1195,9 @@ void Log::outCharDump(const char* str, uint32 account_id, uint32 guid, const cha
 void Log::outRALog(const char* str, ...)
 {
     if (!str)
-        { return; }
+    {
+        return;
+    }
 
     if (raLogfile)
     {
@@ -1125,7 +1241,9 @@ void Log::setScriptLibraryErrorFile(char const* fname, char const* libName)
     m_scriptLibName = libName;
 
     if (scriptErrLogFile)
-        { fclose(scriptErrLogFile); }
+    {
+        fclose(scriptErrLogFile);
+    }
 
     if (!fname)
     {
@@ -1141,7 +1259,9 @@ void Log::setScriptLibraryErrorFile(char const* fname, char const* libName)
 void outstring_log(const char* str, ...)
 {
     if (!str)
-        { return; }
+    {
+        return;
+    }
 
     char buf[256];
     va_list ap;
@@ -1155,7 +1275,9 @@ void outstring_log(const char* str, ...)
 void detail_log(const char* str, ...)
 {
     if (!str)
-        { return; }
+    {
+        return;
+    }
 
     char buf[256];
     va_list ap;
@@ -1169,7 +1291,9 @@ void detail_log(const char* str, ...)
 void debug_log(const char* str, ...)
 {
     if (!str)
-        { return; }
+    {
+        return;
+    }
 
     char buf[256];
     va_list ap;
@@ -1183,7 +1307,9 @@ void debug_log(const char* str, ...)
 void error_log(const char* str, ...)
 {
     if (!str)
-        { return; }
+    {
+        return;
+    }
 
     char buf[256];
     va_list ap;
@@ -1197,7 +1323,9 @@ void error_log(const char* str, ...)
 void error_db_log(const char* str, ...)
 {
     if (!str)
-        { return; }
+    {
+        return;
+    }
 
     char buf[256];
     va_list ap;
@@ -1216,7 +1344,9 @@ void setScriptLibraryErrorFile(char const* fname, char const* libName)
 void script_error_log(const char* str, ...)
 {
     if (!str)
-        { return; }
+    {
+        return;
+    }
 
     char buf[256];
     va_list ap;

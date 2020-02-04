@@ -2,7 +2,7 @@
  * MaNGOS is a full featured server for World of Warcraft, supporting
  * the following clients: 1.12.x, 2.4.3, 3.3.5a, 4.3.4a and 5.4.8
  *
- * Copyright (C) 2005-2019  MaNGOS project <https://getmangos.eu>
+ * Copyright (C) 2005-2020 MaNGOS <https://getmangos.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,15 +41,23 @@ Channel::Channel(const std::string& name)
         m_flags |= CHANNEL_FLAG_GENERAL;                    // for all built-in channels
 
         if (ch->flags & CHANNEL_DBC_FLAG_TRADE)             // for trade channel
-            { m_flags |= CHANNEL_FLAG_TRADE; }
+        {
+            m_flags |= CHANNEL_FLAG_TRADE;
+        }
 
         if (ch->flags & CHANNEL_DBC_FLAG_CITY_ONLY2)        // for city only channels
-            { m_flags |= CHANNEL_FLAG_CITY; }
+        {
+            m_flags |= CHANNEL_FLAG_CITY;
+        }
 
         if (ch->flags & CHANNEL_DBC_FLAG_LFG)               // for LFG channel
-            { m_flags |= CHANNEL_FLAG_LFG; }
+        {
+            m_flags |= CHANNEL_FLAG_LFG;
+        }
         else                                                // for all other channels
-            { m_flags |= CHANNEL_FLAG_NOT_LFG; }
+        {
+            m_flags |= CHANNEL_FLAG_NOT_LFG;
+        }
     }
     else                                                    // it's custom channel
     {
@@ -88,7 +96,9 @@ void Channel::Join(Player* player, const char* password)
     }
 
     if (player->GetGuildId() && (GetFlags() == 0x38))
+    {
         return;
+    }
 
     // join channel
     player->JoinedChannel(this);
@@ -337,7 +347,9 @@ void Channel::SetMode(Player* player, const char* targetName, bool moderator, bo
 
     ObjectGuid targetGuid = target->GetObjectGuid();
     if (moderator && guid == m_ownerGuid && targetGuid == m_ownerGuid)
+    {
         return;
+    }
 
     if (!IsOn(targetGuid))
     {
@@ -558,7 +570,9 @@ void Channel::Moderate(Player* player)
 void Channel::Say(Player* player, const char* text, uint32 lang)
 {
     if (!text)
+    {
         return;
+    }
 
     ObjectGuid guid = player->GetObjectGuid();
     Player* plr = sObjectMgr.GetPlayer(guid);
@@ -571,16 +585,14 @@ void Channel::Say(Player* player, const char* text, uint32 lang)
             speakInLocalDef = true;
             speakInWorldDef = true;
         }
-        
+
+        // Only Applicable for Vanilla
         HonorRankInfo honorInfo = plr->GetHonorRankInfo();
         //We can speak in local defense if we're above this rank (see .h file)
         if (honorInfo.rank >= SPEAK_IN_LOCALDEFENSE_RANK)
             speakInLocalDef = true;
-        // Are we not allowed to speak in WorldDefense at all?
-        // if (honorInfo.rank >= SPEAK_IN_WORLDDEFENSE_RANK)
-        //     speakInWorldDef = true;
     }
-    
+
     if (!IsOn(guid))
     {
         WorldPacket data;
@@ -588,7 +600,6 @@ void Channel::Say(Player* player, const char* text, uint32 lang)
         SendToOne(&data, guid);
         return;
     }
-
     else if (m_players[guid].IsMuted() ||
              (GetChannelId() == CHANNEL_ID_LOCAL_DEFENSE && !speakInLocalDef) ||
              (GetChannelId() == CHANNEL_ID_WORLD_DEFENSE && !speakInWorldDef))
@@ -681,7 +692,9 @@ void Channel::SetOwner(ObjectGuid guid, bool exclaim)
         // [] will re-add player after it possible removed
         PlayerList::iterator p_itr = m_players.find(m_ownerGuid);
         if (p_itr != m_players.end())
-            { p_itr->second.SetOwner(false); }
+        {
+            p_itr->second.SetOwner(false);
+        }
     }
 
     m_ownerGuid = guid;
@@ -720,7 +733,9 @@ void Channel::SendToAll(WorldPacket* data, ObjectGuid guid)
 void Channel::SendToOne(WorldPacket* data, ObjectGuid who)
 {
     if (Player* plr = ObjectMgr::GetPlayer(who))
-        { plr->GetSession()->SendPacket(data); }
+    {
+        plr->GetSession()->SendPacket(data);
+    }
 }
 
 void Channel::Voice(ObjectGuid /*guid1*/, ObjectGuid /*guid2*/)
@@ -761,8 +776,6 @@ void Channel::MakeYouJoined(WorldPacket* data)
 void Channel::MakeYouLeft(WorldPacket* data)
 {
     MakeNotifyPacket(data, CHAT_YOU_LEFT_NOTICE);
-    //*data << uint32(GetChannelId());                        //[-ZERO]
-    //*data << uint8(0);                                      //[-ZERO] can be 0x00 and 0x01 (bool)
 }
 
 void Channel::MakeWrongPassword(WorldPacket* data)
@@ -814,7 +827,9 @@ void Channel::MakeChannelOwner(WorldPacket* data)
     std::string name = "";
 
     if (!sObjectMgr.GetPlayerNameByGUID(m_ownerGuid, name) || name.empty())
-        { name = "PLAYER_NOT_FOUND"; }
+    {
+        name = "PLAYER_NOT_FOUND";
+    }
 
     MakeNotifyPacket(data, CHAT_CHANNEL_OWNER_NOTICE);
     *data << ((IsConstant() || !m_ownerGuid) ? "Nobody" : name);

@@ -2,7 +2,7 @@
  * MaNGOS is a full featured server for World of Warcraft, supporting
  * the following clients: 1.12.x, 2.4.3, 3.3.5a, 4.3.4a and 5.4.8
  *
- * Copyright (C) 2005-2019  MaNGOS project <https://getmangos.eu>
+ * Copyright (C) 2005-2020 MaNGOS <https://getmangos.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 
 static_assert(MAXIMAL_AI_EVENT_EVENTAI <= 32, "Maximal 32 AI_EVENTs supported with EventAI");
 
-CreatureAI::CreatureAI(Creature* creature) : m_creature(creature), m_combatMovement(CM_SCRIPT),
+CreatureAI::CreatureAI(Creature* creature) : m_creature(creature), m_combatMovement(COMBAT_MOVEMENT_SCRIPT),
                                              m_attackDistance(0.0f), m_attackAngle(0.0f)
 {
 }
@@ -49,7 +49,9 @@ void CreatureAI::EnterEvadeMode()
 void CreatureAI::AttackedBy(Unit* attacker)
 {
     if (!m_creature->getVictim())
-        { AttackStart(attacker); }
+    {
+        AttackStart(attacker);
+    }
 }
 
 CanCastResult CreatureAI::CanCastSpell(Unit* pTarget, const SpellEntry* pSpell, bool isTriggered)
@@ -59,21 +61,31 @@ CanCastResult CreatureAI::CanCastSpell(Unit* pTarget, const SpellEntry* pSpell, 
     {
         // State does not allow
         if (m_creature->hasUnitState(UNIT_STAT_CAN_NOT_REACT_OR_LOST_CONTROL))
-            { return CAST_FAIL_STATE; }
+        {
+            return CAST_FAIL_STATE;
+        }
 
         if (pSpell->PreventionType == SPELL_PREVENTION_TYPE_SILENCE && m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SILENCED))
-            { return CAST_FAIL_SILENCED; }
+        {
+            return CAST_FAIL_SILENCED;
+        }
 
         if (pSpell->PreventionType == SPELL_PREVENTION_TYPE_PACIFY && m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED))
-            { return CAST_FAIL_STATE; }
+        {
+            return CAST_FAIL_STATE;
+        }
 
         // Check for power (also done by Spell::CheckCast())
         if (m_creature->GetPower((Powers)pSpell->powerType) < Spell::CalculatePowerCost(pSpell, m_creature))
-            { return CAST_FAIL_POWER; }
+        {
+            return CAST_FAIL_POWER;
+        }
     }
 
     if (!m_creature->IsWithinLOSInMap(pTarget))
-        { return CAST_FAIL_NO_LOS; }
+    {
+        return CAST_FAIL_NO_LOS;
+    }
 
     if (const SpellRangeEntry* pSpellRange = sSpellRangeStore.LookupEntry(pSpell->rangeIndex))
     {
@@ -83,18 +95,24 @@ CanCastResult CreatureAI::CanCastSpell(Unit* pTarget, const SpellEntry* pSpell, 
             float fDistance = m_creature->GetCombatDistance(pTarget, pSpell->rangeIndex == SPELL_RANGE_IDX_COMBAT);
 
             if (fDistance > pSpellRange->maxRange)
-                { return CAST_FAIL_TOO_FAR; }
+            {
+                return CAST_FAIL_TOO_FAR;
+            }
 
             float fMinRange = pSpellRange->minRange;
 
             if (fMinRange && fDistance < fMinRange)
-                { return CAST_FAIL_TOO_CLOSE; }
+            {
+                return CAST_FAIL_TOO_CLOSE;
+            }
         }
 
         return CAST_OK;
     }
     else
-        { return CAST_FAIL_OTHER; }
+    {
+        return CAST_FAIL_OTHER;
+    }
 }
 
 CanCastResult CreatureAI::DoCastSpellIfCan(Unit* pTarget, uint32 uiSpell, uint32 uiCastFlags, ObjectGuid uiOriginalCasterGUID)
@@ -102,7 +120,9 @@ CanCastResult CreatureAI::DoCastSpellIfCan(Unit* pTarget, uint32 uiSpell, uint32
     Unit* pCaster = m_creature;
 
     if (uiCastFlags & CAST_FORCE_TARGET_SELF)
-        { pCaster = pTarget; }
+    {
+        pCaster = pTarget;
+    }
 
     if (!pCaster->IsNonMeleeSpellCasted(false) || (uiCastFlags & (CAST_TRIGGERED | CAST_INTERRUPT_PREVIOUS)))
     {
@@ -112,7 +132,9 @@ CanCastResult CreatureAI::DoCastSpellIfCan(Unit* pTarget, uint32 uiSpell, uint32
             if (uiCastFlags & CAST_AURA_NOT_PRESENT)
             {
                 if (pTarget->HasAura(uiSpell))
-                    { return CAST_FAIL_TARGET_AURA; }
+                {
+                    return CAST_FAIL_TARGET_AURA;
+                }
             }
 
             // Check if can not cast spell
@@ -121,14 +143,15 @@ CanCastResult CreatureAI::DoCastSpellIfCan(Unit* pTarget, uint32 uiSpell, uint32
                 CanCastResult castResult = CanCastSpell(pTarget, pSpell, uiCastFlags & CAST_TRIGGERED);
 
                 if (castResult != CAST_OK)
-                { 
+                {
                     return castResult;
                 }
             }
 
             if ( (uiCastFlags & CAST_INTERRUPT_PREVIOUS) && pCaster->IsNonMeleeSpellCasted(false))
+            {
                 pCaster->CastStop();
-
+            }
             pCaster->StopMoving();
 
             pCaster->CastSpell(pTarget, pSpell, uiCastFlags & CAST_TRIGGERED, NULL, NULL, uiOriginalCasterGUID);
@@ -151,7 +174,7 @@ bool CreatureAI::DoMeleeAttackIfReady()
 
 void CreatureAI::SetCombatMovement(bool enable, bool stopOrStartMovement /*=false*/)
 {
-    SetCombatMovementFlag(CM_SCRIPT, enable);
+    SetCombatMovementFlag(COMBAT_MOVEMENT_SCRIPT, enable);
 
     if (stopOrStartMovement)     // Only change current movement while in combat
         SetChase(enable);
@@ -169,7 +192,9 @@ void CreatureAI::SetCombatMovementFlag(uint8 flag, bool setFlag)
     {
         m_combatMovement &= ~flag;
         if (m_combatMovement == 0)
+        {
             m_creature->addUnitState(UNIT_STAT_NO_COMBAT_MOVEMENT);
+        }
     }
 }
 
@@ -205,9 +230,11 @@ void CreatureAI::HandleMovementOnAttackStart(Unit* victim)
 {
     MotionMaster* creatureMotion = m_creature->GetMotionMaster();
     MovementGeneratorType mmgen = creatureMotion->GetCurrentMovementGeneratorType();
-    
+
     if (IsCombatMovement())
-      { creatureMotion->MoveChase(victim, m_attackDistance, m_attackAngle); }
+    {
+        creatureMotion->MoveChase(victim, m_attackDistance, m_attackAngle);
+    }
 
     // TODO - adapt this to only stop OOC-MMGens when MotionMaster rewrite is finished
     else if (mmgen == WAYPOINT_MOTION_TYPE || mmgen == RANDOM_MOTION_TYPE)
@@ -234,7 +261,9 @@ class AiDelayEventAround : public BasicEvent
             // Pushing guids because in delay can happen some creature gets despawned => invalid pointer
             m_receiverGuids.reserve(receivers.size());
             for (std::list<Creature*>::const_iterator itr = receivers.begin(); itr != receivers.end(); ++itr)
-                { m_receiverGuids.push_back((*itr)->GetObjectGuid()); }
+            {
+                m_receiverGuids.push_back((*itr)->GetObjectGuid());
+            }
         }
 
         bool Execute(uint64 /*e_time*/, uint32 /*p_time*/) override

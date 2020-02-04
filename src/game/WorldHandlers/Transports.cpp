@@ -2,7 +2,7 @@
  * MaNGOS is a full featured server for World of Warcraft, supporting
  * the following clients: 1.12.x, 2.4.3, 3.3.5a, 4.3.4a and 5.4.8
  *
- * Copyright (C) 2005-2019  MaNGOS project <https://getmangos.eu>
+ * Copyright (C) 2005-2020 MaNGOS <https://getmangos.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,9 @@ void Map::LoadLocalTransports()
 /*
     sLog.outString();
     for (std::set<Transport*>::const_iterator i = i_transports.begin(); i != i_transports.end(); ++i)
+    {
         sLog.outString(">>>%s initialized", (*i)->GetGuidStr().c_str());
+    }
 */
     sLog.outString(">> Loaded " SIZEFMTD " local transports for map %u", i_transports.size(), GetId());
 
@@ -98,7 +100,9 @@ void MapManager::LoadTransports()
         }
 
         for (std::set<uint32>::const_iterator i = t->GetMapsUsed()->begin(); i != t->GetMapsUsed()->end(); ++i)
-            { m_TransportsByMap[*i].insert(t); }
+        {
+            m_TransportsByMap[*i].insert(t);
+        }
 
         m_Transports.insert(t);
 
@@ -128,7 +132,9 @@ void MapManager::LoadTransports()
 
     sLog.outString();
     for (std::set<Transport*>::const_iterator i = m_Transports.begin(); i != m_Transports.end(); ++i)
+    {
         sLog.outString(">>>Global transporter %s (id = %u) initialized", (*i)->GetName(), (*i)->GetEntry());
+    }
 
     sLog.outString(">> Loaded %u global transports", count);
 }
@@ -159,7 +165,9 @@ bool Transport::AddPassenger(Unit* passenger)
 bool Transport::RemovePassenger(Unit* passenger)
 {
     if (m_passengers.erase(passenger))
-        { DETAIL_LOG("%s removed from transport %s.", passenger->GetGuidStr().c_str(), GetName()); }
+    {
+        DETAIL_LOG("%s removed from transport %s.", passenger->GetGuidStr().c_str(), GetName());
+    }
     return true;
 }
 
@@ -179,7 +187,9 @@ LocalTransport::~LocalTransport()
 bool LocalTransport::Initialize(uint32 guid, Map* m)
 {
     if (m == NULL)
-      { return false; }
+    {
+        return false;
+    }
 
     GameObjectData const* gdata = sObjectMgr.GetGOData(guid);
     if (!gdata)
@@ -400,7 +410,9 @@ bool GlobalTransport::GenerateWaypoints()
         {
             // remember first stop frame
             if (firstStop == -1)
-                { firstStop = i; }
+            {
+                firstStop = i;
+            }
             lastStop = i;
         }
     }
@@ -410,9 +422,13 @@ bool GlobalTransport::GenerateWaypoints()
     {
         int j = (i + lastStop) % keyFrames.size();
         if (keyFrames[j].node->actionFlag == 2)
-            { tmpDist = 0; }
+        {
+            tmpDist = 0;
+        }
         else
-            { tmpDist += keyFrames[j].distFromPrev; }
+        {
+            tmpDist += keyFrames[j].distFromPrev;
+        }
         keyFrames[j].distSinceStop = tmpDist;
     }
 
@@ -422,20 +438,30 @@ bool GlobalTransport::GenerateWaypoints()
         tmpDist += keyFrames[(j + 1) % keyFrames.size()].distFromPrev;
         keyFrames[j].distUntilStop = tmpDist;
         if (keyFrames[j].node->actionFlag == 2)
-            { tmpDist = 0; }
+        {
+            tmpDist = 0;
+        }
     }
 
     for (size_t i = 0; i < keyFrames.size(); ++i)
     {
         if (keyFrames[i].distSinceStop < (30 * 30 * 0.5f))
-            { keyFrames[i].tFrom = sqrt(2 * keyFrames[i].distSinceStop); }
+        {
+            keyFrames[i].tFrom = sqrt(2 * keyFrames[i].distSinceStop);
+        }
         else
-            { keyFrames[i].tFrom = ((keyFrames[i].distSinceStop - (30 * 30 * 0.5f)) / 30) + 30; }
+        {
+            keyFrames[i].tFrom = ((keyFrames[i].distSinceStop - (30 * 30 * 0.5f)) / 30) + 30;
+        }
 
         if (keyFrames[i].distUntilStop < (30 * 30 * 0.5f))
-            { keyFrames[i].tTo = sqrt(2 * keyFrames[i].distUntilStop); }
+        {
+            keyFrames[i].tTo = sqrt(2 * keyFrames[i].distUntilStop);
+        }
         else
-            { keyFrames[i].tTo = ((keyFrames[i].distUntilStop - (30 * 30 * 0.5f)) / 30) + 30; }
+        {
+            keyFrames[i].tTo = ((keyFrames[i].distUntilStop - (30 * 30 * 0.5f)) / 30) + 30;
+        }
 
         keyFrames[i].tFrom *= 1000;
         keyFrames[i].tTo *= 1000;
@@ -450,7 +476,9 @@ bool GlobalTransport::GenerateWaypoints()
     int t = 0;
     bool teleport = false;
     if (keyFrames[keyFrames.size() - 1].node->mapid != keyFrames[0].node->mapid)
-        { teleport = true; }
+    {
+        teleport = true;
+    }
 
     WayPoint pos(keyFrames[0].node->mapid, keyFrames[0].node->x, keyFrames[0].node->y, keyFrames[0].node->z, teleport);
     m_WayPoints[0] = pos;
@@ -488,7 +516,9 @@ bool GlobalTransport::GenerateWaypoints()
                     //                    sLog.outString("T: %d, D: %f, x: %f, y: %f, z: %f", t, d, newX, newY, newZ);
                     pos = WayPoint(keyFrames[i].node->mapid, newX, newY, newZ, teleport);
                     if (teleport)
-                        { m_WayPoints[t] = pos; }
+                    {
+                        m_WayPoints[t] = pos;
+                    }
                 }
 
                 if (tFrom < tTo)                            // caught in tFrom dock's "gravitational pull"
@@ -521,9 +551,13 @@ bool GlobalTransport::GenerateWaypoints()
         }
 
         if (keyFrames[i + 1].tFrom > keyFrames[i + 1].tTo)
-            { t += 100 - ((long)keyFrames[i + 1].tTo % 100); }
+        {
+            t += 100 - ((long)keyFrames[i + 1].tTo % 100);
+        }
         else
-            { t += (long)keyFrames[i + 1].tTo % 100; }
+        {
+            t += (long)keyFrames[i + 1].tTo % 100;
+        }
 
         teleport = false;
         if ((keyFrames[i + 1].node->actionFlag == 1) || (keyFrames[i + 1].node->mapid != keyFrames[i].node->mapid))
@@ -564,7 +598,9 @@ void GlobalTransport::MoveToNextWayPoint()
 
     ++m_next;
     if (m_next == m_WayPoints.end())
-        { m_next = m_WayPoints.begin(); }
+    {
+        m_next = m_WayPoints.begin();
+    }
 }
 
 void GlobalTransport::TeleportTransport(uint32 newMapid, float x, float y, float z)
@@ -606,7 +642,9 @@ void GlobalTransport::TeleportTransport(uint32 newMapid, float x, float y, float
 void GlobalTransport::Update(uint32 /*update_diff*/, uint32 /*p_time*/)
 {
     if (m_WayPoints.size() <= 1)
-        { return; }
+    {
+        return;
+    }
 
     m_timer = WorldTimer::getMSTime() % m_period;
     while (((m_timer - m_curr->first) % m_pathTime) > ((m_next->first - m_curr->first) % m_pathTime))
@@ -626,7 +664,9 @@ void GlobalTransport::Update(uint32 /*update_diff*/, uint32 /*p_time*/)
         m_nextNodeTime = m_curr->first;
 
         if (m_curr == m_WayPoints.begin())
-            { DETAIL_FILTER_LOG(LOG_FILTER_TRANSPORT_MOVES, " ************ BEGIN ************** %s", GetName()); }
+        {
+            DETAIL_FILTER_LOG(LOG_FILTER_TRANSPORT_MOVES, " ************ BEGIN ************** %s", GetName());
+        }
 
         DETAIL_FILTER_LOG(LOG_FILTER_TRANSPORT_MOVES, "%s moved to %f %f %f %d", GetName(), m_curr->second.x, m_curr->second.y, m_curr->second.z, m_curr->second.mapid);
     }
@@ -636,7 +676,9 @@ void GlobalTransport::UpdateForMap(Map const* targetMap)
 {
     Map::PlayerList const& pl = targetMap->GetPlayers();
     if (pl.isEmpty())
-        { return; }
+    {
+        return;
+    }
 
     if (GetMapId() == targetMap->GetId())
     {
@@ -661,6 +703,8 @@ void GlobalTransport::UpdateForMap(Map const* targetMap)
 
         for (Map::PlayerList::const_iterator itr = pl.begin(); itr != pl.end(); ++itr)
             if (this != itr->getSource()->GetTransport())
-                { itr->getSource()->SendDirectMessage(&out_packet); }
+            {
+                itr->getSource()->SendDirectMessage(&out_packet);
+            }
     }
 }

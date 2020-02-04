@@ -2,7 +2,7 @@
  * MaNGOS is a full featured server for World of Warcraft, supporting
  * the following clients: 1.12.x, 2.4.3, 3.3.5a, 4.3.4a and 5.4.8
  *
- * Copyright (C) 2005-2019  MaNGOS project <https://getmangos.eu>
+ * Copyright (C) 2005-2020 MaNGOS <https://getmangos.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,19 +130,27 @@ class Log : public MaNGOS::Singleton<Log, MaNGOS::ClassLevelLockable<Log, ACE_Th
         ~Log()
         {
             if (logfile != NULL)
-                { fclose(logfile); }
+            {
+                fclose(logfile);
+            }
             logfile = NULL;
 
             if (gmLogfile != NULL)
-                { fclose(gmLogfile); }
+            {
+                fclose(gmLogfile);
+            }
             gmLogfile = NULL;
 
             if (charLogfile != NULL)
-                { fclose(charLogfile); }
+            {
+                fclose(charLogfile);
+            }
             charLogfile = NULL;
 
             if (dberLogfile != NULL)
-                { fclose(dberLogfile); }
+            {
+                fclose(dberLogfile);
+            }
             dberLogfile = NULL;
 
 #ifdef ENABLE_ELUNA
@@ -152,19 +160,27 @@ class Log : public MaNGOS::Singleton<Log, MaNGOS::ClassLevelLockable<Log, ACE_Th
 #endif /* ENABLE_ELUNA */
 
             if (eventAiErLogfile != NULL)
-                { fclose(eventAiErLogfile); }
+            {
+                fclose(eventAiErLogfile);
+            }
             eventAiErLogfile = NULL;
 
             if (scriptErrLogFile != NULL)
-                { fclose(scriptErrLogFile); }
+            {
+                fclose(scriptErrLogFile);
+            }
             scriptErrLogFile = NULL;
 
             if (raLogfile != NULL)
-                { fclose(raLogfile); }
+            {
+                fclose(raLogfile);
+            }
             raLogfile = NULL;
 
             if (worldLogfile != NULL)
-                { fclose(worldLogfile); }
+            {
+                fclose(worldLogfile);
+            }
             worldLogfile = NULL;
 
             if (wardenLogfile != NULL)
